@@ -1,0 +1,140 @@
+{
+  "info": {
+    "name": "TP2 - Clinica Backend Semana 1",
+    "_postman_id": "tp2-clinica-backend-s1",
+    "description": "Colección de endpoints para la entrega Backend Semana 1 - Sistema de Gestión de Turnos Médicos",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:3000",
+      "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Health",
+      "item": [
+        {
+          "name": "GET /health",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/health",
+            "description": "Verifica que el servidor y la base de datos estén funcionando."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Coberturas",
+      "item": [
+        {
+          "name": "GET /coberturas",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/coberturas",
+            "description": "Devuelve el listado de coberturas médicas disponibles para el registro."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "POST /auth/registro",
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/auth/registro",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Maria\",\n  \"apellido\": \"Lopez\",\n  \"dni\": \"44556677\",\n  \"email\": \"mlopez@test.com\",\n  \"password\": \"password123\",\n  \"fecha_nacimiento\": \"1995-03-20\",\n  \"id_cobertura\": 1,\n  \"telefono\": \"3424999888\"\n}"
+            },
+            "description": "Registra un nuevo usuario con rol paciente. La contraseña se almacena hasheada con bcrypt."
+          }
+        },
+        {
+          "name": "POST /auth/login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var json = pm.response.json();",
+                  "if (json.datos && json.datos.token) {",
+                  "    pm.collectionVariables.set('token', json.datos.token);",
+                  "    console.log('Token guardado:', json.datos.token);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "url": "{{base_url}}/auth/login",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"dni\": \"99887766\",\n  \"password\": \"12345678\"\n}"
+            },
+            "description": "Valida credenciales y devuelve un JWT. El token se guarda automáticamente en la variable {{token}} de la colección."
+          }
+        },
+        {
+          "name": "GET /auth/perfil (requiere token)",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/auth/perfil",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "description": "Devuelve los datos del usuario autenticado. Requiere JWT válido en el header Authorization."
+          }
+        },
+        {
+          "name": "GET /auth/admin-test (solo admin - espera 403)",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/auth/admin-test",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "description": "Endpoint de prueba para verificarRol. Con token de paciente devuelve 403."
+          }
+        },
+        {
+          "name": "GET /auth/perfil (sin token - espera 401)",
+          "request": {
+            "method": "GET",
+            "url": "{{base_url}}/auth/perfil",
+            "description": "Prueba del middleware verificarToken sin enviar token. Debe devolver 401."
+          }
+        }
+      ]
+    }
+  ]
+}
