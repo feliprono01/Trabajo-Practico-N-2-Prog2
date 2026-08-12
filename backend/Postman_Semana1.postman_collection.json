@@ -1,0 +1,318 @@
+{
+	"info": {
+		"_postman_id": "071f93e3-dbdf-4642-ac34-67e661257fbb",
+		"name": "TP2 - Clinica Backend Semana 1",
+		"description": "Colección de endpoints para la entrega Backend Semana 1 - Sistema de Gestión de Turnos Médicos",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Health",
+			"item": [
+				{
+					"name": "GET /health",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/health",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"health"
+							]
+						},
+						"description": "Verifica que el servidor y la base de datos estén funcionando."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Coberturas",
+			"item": [
+				{
+					"name": "GET /coberturas",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/coberturas",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"coberturas"
+							]
+						},
+						"description": "Devuelve el listado de coberturas médicas disponibles para el registro."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "POST /auth/registro",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"nombre\": \"Maria\",\n  \"apellido\": \"Lopez\",\n  \"dni\": \"44556677\",\n  \"email\": \"mlopez@test.com\",\n  \"password\": \"password123\",\n  \"fecha_nacimiento\": \"1995-03-20\",\n  \"id_cobertura\": 1,\n  \"telefono\": \"3424999888\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/registro",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"registro"
+							]
+						},
+						"description": "Registra un nuevo usuario con rol paciente. La contraseña se almacena hasheada con bcrypt."
+					},
+					"response": []
+				},
+				{
+					"name": "POST /auth/registro CAMPOS FALTANTES (espera 400)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"nombre\": \"Carlos\",\n  \"apellido\": \"Ruiz\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/registro",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"registro"
+							]
+						},
+						"description": "Intento de registro sin los campos requeridos. Debe devolver 400 con mensaje de error."
+					},
+					"response": []
+				},
+				{
+					"name": "POST /auth/registro DNI DUPLICADO (espera 400)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"nombre\": \"Otro\",\n  \"apellido\": \"Usuario\",\n  \"dni\": \"44556677\",\n  \"email\": \"otro@test.com\",\n  \"password\": \"password123\",\n  \"fecha_nacimiento\": \"1990-01-01\",\n  \"id_cobertura\": 1,\n  \"telefono\": \"3424111222\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/registro",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"registro"
+							]
+						},
+						"description": "Intento de registro con DNI ya existente. Debe devolver 400 indicando DNI duplicado. Requiere haber ejecutado POST /auth/registro primero."
+					},
+					"response": []
+				},
+				{
+					"name": "POST /auth/login POSITIVO",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var json = pm.response.json();",
+									"if (json.datos && json.datos.token) {",
+									"    pm.collectionVariables.set('token', json.datos.token);",
+									"    console.log('Token guardado:', json.datos.token);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"dni\": \"44556677\",\n  \"password\": \"password123\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/login",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						},
+						"description": "Login exitoso con el usuario registrado en POST /auth/registro. Devuelve 200 con el JWT. El token se guarda automáticamente en la variable {{token}} de la colección."
+					},
+					"response": []
+				},
+				{
+					"name": "POST /auth/login NEGATIVO",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"dni\": \"99887766\",\n  \"password\": \"12345678\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/auth/login",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"login"
+							]
+						},
+						"description": "Valida credenciales incorrectas. Espera error 401."
+					},
+					"response": []
+				},
+				{
+					"name": "GET /auth/perfil",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/auth/perfil",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"perfil"
+							]
+						},
+						"description": "Devuelve perfil del usuario autenticado."
+					},
+					"response": []
+				},
+				{
+					"name": "GET /auth/perfil (sin token)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/auth/perfil",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"perfil"
+							]
+						},
+						"description": "Intenta acceder sin token. Espera 401."
+					},
+					"response": []
+				},
+				{
+					"name": "GET /auth/admin-test (espera 403)",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/auth/admin-test",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"auth",
+								"admin-test"
+							]
+						},
+						"description": "Intenta acceder a ruta admin con token paciente. Espera 403."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "404",
+			"item": [
+				{
+					"name": "GET /ruta-inexistente",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/ruta-inexistente",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"ruta-inexistente"
+							]
+						},
+						"description": "Verifica que el servidor responda con 404 para rutas no definidas."
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:3000",
+			"type": "string"
+		},
+		{
+			"key": "token",
+			"value": "",
+			"type": "string"
+		}
+	]
+}
