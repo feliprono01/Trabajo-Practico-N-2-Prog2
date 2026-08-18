@@ -4,6 +4,9 @@ const express = require('express');
 const healthRoutes = require('./src/routes/healthRoutes');
 const authRoutes = require('./src/routes/authRoutes');
 const coberturaRoutes = require('./src/routes/coberturaRoutes');
+const sedeRoutes = require('./src/routes/sedeRoutes');
+const especialidadRoutes = require('./src/routes/especialidadRoutes');
+const agendaRoutes = require('./src/routes/agendaRoutes');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -15,6 +18,9 @@ app.use(express.json());
 app.use('/health', healthRoutes);
 app.use('/auth', authRoutes);
 app.use('/coberturas', coberturaRoutes);
+app.use('/sedes', sedeRoutes);
+app.use('/especialidades', especialidadRoutes);
+app.use('/agenda', agendaRoutes);
 
 // Ruta no encontrada
 app.use((req, res) => {
