@@ -2,7 +2,7 @@
   "info": {
     "_postman_id": "a1e93c40-0a2e-4b7a-9c3d-5f2b8e6d1234",
     "name": "TP2 - Clinica Backend (Semana 1 + Semana 2)",
-    "description": "Colección única del backend del Trabajo Práctico N°2 - Sistema de Gestión de Turnos Médicos. Organizada en dos carpetas de nivel superior, una por semana de entrega, en el mismo orden en que se fueron liberando las consignas.\n\nVariables de colección:\n- base_url: URL del servidor (por defecto http://localhost:3000).\n- token: JWT de un usuario con rol 'paciente'. Se completa automáticamente al ejecutar 'POST /auth/login POSITIVO' (carpeta Semana 1 > Auth), y se reutiliza en Semana 2 para los casos negativos de rol (403).\n- admin_token: JWT de un usuario con rol 'admin', 'medico' u 'operador', usado en los endpoints de Semana 2. Los usuarios semilla del script clinica.sql tienen contraseñas de ejemplo no válidas, así que este token hay que pegarlo a mano: o bien actualizás el hash de un usuario semilla (admin, dni 18222333) con un hash bcrypt real y logueás por /auth/login, o le cambiás el rol a un usuario que hayas registrado. Ver README.md del proyecto para el detalle.",
+    "description": "Colección única del backend del Trabajo Práctico N°2 - Sistema de Gestión de Turnos Médicos. Organizada en dos carpetas de nivel superior, una por semana de entrega, en el mismo orden en que se fueron liberando las consignas.\n\nPara correrla de punta a punta sin tocar nada a mano: 1) importar backend/clinica.sql, 2) levantar el servidor con 'npm run dev', 3) 'Run collection' sobre las dos carpetas en orden. Los tokens se completan solos.\n\nLos usuarios que trae clinica.sql (operador, paciente, medico y admin) tienen todos la contraseña de prueba: Test1234!\n\nVariables de colección:\n- base_url: URL del servidor (por defecto http://localhost:3000).\n- token: JWT de un usuario con rol 'paciente'. Se completa automáticamente al ejecutar 'POST /auth/login POSITIVO' (carpeta Semana 1 > Auth), y se reutiliza en Semana 2 para los casos negativos de rol (403).\n- admin_token: JWT del usuario con rol 'admin' (Marcos Gomez, dni 18222333). Se completa automáticamente al ejecutar 'Semana 2 > Setup > POST /auth/login ADMIN'.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "item": [
@@ -237,6 +237,48 @@
     {
       "name": "Semana 2 - CRUD de sedes, especialidades, coberturas y agenda",
       "item": [
+        {
+          "name": "Setup",
+          "item": [
+            {
+              "name": "POST /auth/login ADMIN",
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "var json = pm.response.json();",
+                      "if (json.datos && json.datos.token) {",
+                      "    pm.collectionVariables.set('admin_token', json.datos.token);",
+                      "    console.log('admin_token guardado:', json.datos.token);",
+                      "} else {",
+                      "    console.warn('No se pudo loguear el admin. Verificá que la base haya sido importada desde backend/clinica.sql.');",
+                      "}"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ],
+              "request": {
+                "method": "POST",
+                "header": [
+                  { "key": "Content-Type", "value": "application/json" }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"dni\": \"18222333\",\n  \"password\": \"Test1234!\"\n}"
+                },
+                "url": {
+                  "raw": "{{base_url}}/auth/login",
+                  "host": ["{{base_url}}"],
+                  "path": ["auth", "login"]
+                },
+                "description": "Login con el usuario admin que trae clinica.sql (Marcos Gomez, dni 18222333, contraseña Test1234!). Guarda el token en {{admin_token}}, usado por el resto de los requests de Semana 2."
+              },
+              "response": []
+            }
+          ]
+        },
         {
           "name": "Sedes",
           "item": [

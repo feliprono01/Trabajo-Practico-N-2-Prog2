@@ -52,19 +52,34 @@ Los roles vigentes en la base (`clinica.sql`) son `paciente`, `medico`, `operado
 - `operador`: gestiona la agenda de cualquier médico y sede.
 - `admin`: único rol habilitado para el CRUD de sedes, especialidades y coberturas.
 
-Los usuarios semilla del script (`admin`, `medico`, `operador`) tienen contraseñas de ejemplo con hashes no válidos, así que no se puede loguear con ellos tal cual vienen. Para probar endpoints que requieren esos roles hay dos opciones:
+### Usuarios de prueba
 
-- Actualizar el `password` de un usuario semilla con un hash bcrypt real (por ejemplo generado con `node -e "console.log(require('bcrypt').hashSync('miclave', 10))"`) y loguear por `POST /auth/login` con su DNI.
-- Registrar un usuario por `POST /auth/registro` (queda como `paciente`) y luego actualizarle el `rol` directamente en la base.
+El script `clinica.sql` originalmente traía los usuarios con hashes de ejemplo (`$2b$10$hashdeejemplo1`) que no eran hashes bcrypt válidos, por lo que era imposible loguearse con ellos. Con autorización de la cátedra se reemplazaron por hashes bcrypt reales, de modo que los cuatro usuarios quedan listos para usar sin pasos adicionales.
+
+**Contraseña de todos: `Test1234!`**
+
+| Rol | Nombre | DNI (usuario de login) |
+|---|---|---|
+| `admin` | Marcos Gomez | `18222333` |
+| `medico` | Ana Lopez | `20111222` |
+| `operador` | Juan Perez | `15200548` |
+| `paciente` | Franco Friggeri | `36000960` |
+
+Para generar hashes propios, si hiciera falta: `node -e "console.log(require('bcrypt').hashSync('miclave', 10))"`.
 
 ## Colección de Postman
 
 Hay una única colección en `backend/Postman_TP2_Backend.postman_collection.json`, con una carpeta por cada semana de entrega (Semana 1 y Semana 2), en el mismo orden en que se liberaron las consignas. Dentro de cada carpeta los requests incluyen tanto los casos exitosos como los casos negativos pedidos por los criterios de aceptación (400, 401, 403, 404, 409).
 
+Para correrla de punta a punta sin tocar nada a mano:
+
+1. Importar `clinica.sql` sobre una base limpia y levantar el servidor (`npm run dev`).
+2. Importar la colección en Postman y, sobre la colección completa, usar **Run collection** con las carpetas "Semana 1" y "Semana 2" en ese orden. Los dos tokens se completan solos vía test scripts — no hace falta pegar nada a mano.
+
 Variables de la colección:
 
 - `base_url`: URL del servidor (por defecto `http://localhost:3000`).
-- `token`: JWT de un usuario `paciente`. Se completa solo al correr `Semana 1 > Auth > POST /auth/login POSITIVO`, y se reutiliza en Semana 2 para los casos negativos de rol (403).
-- `admin_token`: JWT de un usuario `admin`, `medico` u `operador`, necesario para los endpoints de Semana 2. Hay que pegarlo a mano siguiendo lo indicado en la sección Roles.
+- `token`: JWT de un usuario `paciente`. Se completa automáticamente al correr `Semana 1 > Auth > POST /auth/login POSITIVO`, y se reutiliza en Semana 2 para los casos negativos de rol (403).
+- `admin_token`: JWT del usuario `admin` (Marcos Gomez). Se completa automáticamente al correr `Semana 2 > Setup > POST /auth/login ADMIN`.
 
 La colección de Semana 2 está pensada para correrse sobre una base recién importada desde `clinica.sql` (los IDs de los requests de actualización/baja asumen los autoincrementales del script original).
