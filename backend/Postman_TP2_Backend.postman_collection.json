@@ -1,7 +1,7 @@
 {
   "info": {
     "_postman_id": "a1e93c40-0a2e-4b7a-9c3d-5f2b8e6d1234",
-    "name": "TP2 - Clinica Backend (Semana 1 + Semana 2)",
+    "name": "TP2 - Clinica Backend (Semana 1 + Semana 2 + Semana 3)",
     "description": "Colección única del backend del Trabajo Práctico N°2 - Sistema de Gestión de Turnos Médicos. Organizada en dos carpetas de nivel superior, una por semana de entrega, en el mismo orden en que se fueron liberando las consignas.\n\nPara correrla de punta a punta sin tocar nada a mano: 1) importar backend/clinica.sql, 2) levantar el servidor con 'npm run dev', 3) 'Run collection' sobre las dos carpetas en orden. Los tokens se completan solos.\n\nLos usuarios que trae clinica.sql (operador, paciente, medico y admin) tienen todos la contraseña de prueba: Test1234!\n\nVariables de colección:\n- base_url: URL del servidor (por defecto http://localhost:3000).\n- token: JWT de un usuario con rol 'paciente'. Se completa automáticamente al ejecutar 'POST /auth/login POSITIVO' (carpeta Semana 1 > Auth), y se reutiliza en Semana 2 para los casos negativos de rol (403).\n- admin_token: JWT del usuario con rol 'admin' (Marcos Gomez, dni 18222333). Se completa automáticamente al ejecutar 'Semana 2 > Setup > POST /auth/login ADMIN'.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
@@ -19,8 +19,12 @@
                 "header": [],
                 "url": {
                   "raw": "{{base_url}}/health",
-                  "host": ["{{base_url}}"],
-                  "path": ["health"]
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "health"
+                  ]
                 },
                 "description": "Verifica que el servidor y la base de datos estén funcionando."
               },
@@ -38,8 +42,12 @@
                 "header": [],
                 "url": {
                   "raw": "{{base_url}}/coberturas",
-                  "host": ["{{base_url}}"],
-                  "path": ["coberturas"]
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "coberturas"
+                  ]
                 },
                 "description": "Servicio de solo lectura, público, que devuelve el listado de coberturas médicas disponibles para el registro de pacientes."
               },
@@ -55,7 +63,10 @@
               "request": {
                 "method": "POST",
                 "header": [
-                  { "key": "Content-Type", "value": "application/json" }
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
                 ],
                 "body": {
                   "mode": "raw",
@@ -63,8 +74,13 @@
                 },
                 "url": {
                   "raw": "{{base_url}}/auth/registro",
-                  "host": ["{{base_url}}"],
-                  "path": ["auth", "registro"]
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "auth",
+                    "registro"
+                  ]
                 },
                 "description": "Registra un nuevo usuario con rol paciente. La contraseña se almacena hasheada con bcrypt."
               },
@@ -75,7 +91,10 @@
               "request": {
                 "method": "POST",
                 "header": [
-                  { "key": "Content-Type", "value": "application/json" }
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
                 ],
                 "body": {
                   "mode": "raw",
@@ -83,8 +102,13 @@
                 },
                 "url": {
                   "raw": "{{base_url}}/auth/registro",
-                  "host": ["{{base_url}}"],
-                  "path": ["auth", "registro"]
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "auth",
+                    "registro"
+                  ]
                 },
                 "description": "Intento de registro sin los campos requeridos. Debe devolver 400 con mensaje de error."
               },
@@ -95,7 +119,10 @@
               "request": {
                 "method": "POST",
                 "header": [
-                  { "key": "Content-Type", "value": "application/json" }
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
                 ],
                 "body": {
                   "mode": "raw",
@@ -103,8 +130,13 @@
                 },
                 "url": {
                   "raw": "{{base_url}}/auth/registro",
-                  "host": ["{{base_url}}"],
-                  "path": ["auth", "registro"]
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "auth",
+                    "registro"
+                  ]
                 },
                 "description": "Intento de registro con DNI ya existente. Debe devolver 400 indicando DNI duplicado. Requiere haber ejecutado POST /auth/registro primero."
               },
@@ -130,7 +162,10 @@
               "request": {
                 "method": "POST",
                 "header": [
-                  { "key": "Content-Type", "value": "application/json" }
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
                 ],
                 "body": {
                   "mode": "raw",
@@ -138,8 +173,13 @@
                 },
                 "url": {
                   "raw": "{{base_url}}/auth/login",
-                  "host": ["{{base_url}}"],
-                  "path": ["auth", "login"]
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "auth",
+                    "login"
+                  ]
                 },
                 "description": "Login exitoso con el usuario registrado en POST /auth/registro (rol paciente). Devuelve 200 con el JWT. El token se guarda automáticamente en la variable {{token}} de la colección, reutilizada también en los casos negativos de Semana 2."
               },
@@ -150,7 +190,10 @@
               "request": {
                 "method": "POST",
                 "header": [
-                  { "key": "Content-Type", "value": "application/json" }
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
                 ],
                 "body": {
                   "mode": "raw",
@@ -158,8 +201,13 @@
                 },
                 "url": {
                   "raw": "{{base_url}}/auth/login",
-                  "host": ["{{base_url}}"],
-                  "path": ["auth", "login"]
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "auth",
+                    "login"
+                  ]
                 },
                 "description": "Valida credenciales incorrectas. Espera error 401."
               },
@@ -170,12 +218,20 @@
               "request": {
                 "method": "GET",
                 "header": [
-                  { "key": "Authorization", "value": "Bearer {{token}}" }
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
                 ],
                 "url": {
                   "raw": "{{base_url}}/auth/perfil",
-                  "host": ["{{base_url}}"],
-                  "path": ["auth", "perfil"]
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "auth",
+                    "perfil"
+                  ]
                 },
                 "description": "Devuelve perfil del usuario autenticado."
               },
@@ -188,8 +244,13 @@
                 "header": [],
                 "url": {
                   "raw": "{{base_url}}/auth/perfil",
-                  "host": ["{{base_url}}"],
-                  "path": ["auth", "perfil"]
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "auth",
+                    "perfil"
+                  ]
                 },
                 "description": "Intenta acceder sin token. Espera 401."
               },
@@ -200,12 +261,20 @@
               "request": {
                 "method": "GET",
                 "header": [
-                  { "key": "Authorization", "value": "Bearer {{token}}" }
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
                 ],
                 "url": {
                   "raw": "{{base_url}}/auth/admin-test",
-                  "host": ["{{base_url}}"],
-                  "path": ["auth", "admin-test"]
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "auth",
+                    "admin-test"
+                  ]
                 },
                 "description": "Intenta acceder a ruta admin con token paciente. Espera 403."
               },
@@ -223,8 +292,12 @@
                 "header": [],
                 "url": {
                   "raw": "{{base_url}}/ruta-inexistente",
-                  "host": ["{{base_url}}"],
-                  "path": ["ruta-inexistente"]
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "ruta-inexistente"
+                  ]
                 },
                 "description": "Verifica que el servidor responda con 404 para rutas no definidas."
               },
@@ -262,7 +335,10 @@
               "request": {
                 "method": "POST",
                 "header": [
-                  { "key": "Content-Type", "value": "application/json" }
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
                 ],
                 "body": {
                   "mode": "raw",
@@ -270,8 +346,13 @@
                 },
                 "url": {
                   "raw": "{{base_url}}/auth/login",
-                  "host": ["{{base_url}}"],
-                  "path": ["auth", "login"]
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "auth",
+                    "login"
+                  ]
                 },
                 "description": "Login con el usuario admin que trae clinica.sql (Marcos Gomez, dni 18222333, contraseña Test1234!). Guarda el token en {{admin_token}}, usado por el resto de los requests de Semana 2."
               },
@@ -287,12 +368,19 @@
               "request": {
                 "method": "GET",
                 "header": [
-                  { "key": "Authorization", "value": "Bearer {{admin_token}}" }
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{admin_token}}"
+                  }
                 ],
                 "url": {
                   "raw": "{{base_url}}/sedes",
-                  "host": ["{{base_url}}"],
-                  "path": ["sedes"]
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "sedes"
+                  ]
                 },
                 "description": "Lista todas las sedes. Solo rol admin."
               },
@@ -303,8 +391,14 @@
               "request": {
                 "method": "POST",
                 "header": [
-                  { "key": "Content-Type", "value": "application/json" },
-                  { "key": "Authorization", "value": "Bearer {{token}}" }
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
                 ],
                 "body": {
                   "mode": "raw",
@@ -312,8 +406,12 @@
                 },
                 "url": {
                   "raw": "{{base_url}}/sedes",
-                  "host": ["{{base_url}}"],
-                  "path": ["sedes"]
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "sedes"
+                  ]
                 },
                 "description": "Intenta crear una sede con el token de un paciente (rol no admin). Espera 403."
               },
@@ -324,8 +422,14 @@
               "request": {
                 "method": "POST",
                 "header": [
-                  { "key": "Content-Type", "value": "application/json" },
-                  { "key": "Authorization", "value": "Bearer {{admin_token}}" }
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{admin_token}}"
+                  }
                 ],
                 "body": {
                   "mode": "raw",
@@ -333,8 +437,12 @@
                 },
                 "url": {
                   "raw": "{{base_url}}/sedes",
-                  "host": ["{{base_url}}"],
-                  "path": ["sedes"]
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "sedes"
+                  ]
                 },
                 "description": "Crea una sede nueva. Solo rol admin. Con el clinica.sql provisto, esta sede queda con id 3."
               },
@@ -345,8 +453,14 @@
               "request": {
                 "method": "PUT",
                 "header": [
-                  { "key": "Content-Type", "value": "application/json" },
-                  { "key": "Authorization", "value": "Bearer {{admin_token}}" }
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{admin_token}}"
+                  }
                 ],
                 "body": {
                   "mode": "raw",
@@ -354,8 +468,13 @@
                 },
                 "url": {
                   "raw": "{{base_url}}/sedes/3",
-                  "host": ["{{base_url}}"],
-                  "path": ["sedes", "3"]
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "sedes",
+                    "3"
+                  ]
                 },
                 "description": "Actualiza la sede creada en el paso anterior. Requiere haber ejecutado POST /sedes primero sobre una base con el clinica.sql original."
               },
@@ -366,12 +485,20 @@
               "request": {
                 "method": "DELETE",
                 "header": [
-                  { "key": "Authorization", "value": "Bearer {{admin_token}}" }
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{admin_token}}"
+                  }
                 ],
                 "url": {
                   "raw": "{{base_url}}/sedes/1",
-                  "host": ["{{base_url}}"],
-                  "path": ["sedes", "1"]
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "sedes",
+                    "1"
+                  ]
                 },
                 "description": "La sede 1 (Sede Centro) tiene médicos/operadores asociados en el clinica.sql provisto. Debe responder 409 controlado y NO eliminarla."
               },
@@ -382,12 +509,20 @@
               "request": {
                 "method": "DELETE",
                 "header": [
-                  { "key": "Authorization", "value": "Bearer {{admin_token}}" }
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{admin_token}}"
+                  }
                 ],
                 "url": {
                   "raw": "{{base_url}}/sedes/3",
-                  "host": ["{{base_url}}"],
-                  "path": ["sedes", "3"]
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "sedes",
+                    "3"
+                  ]
                 },
                 "description": "Elimina la sede creada anteriormente (sin dependencias)."
               },
@@ -403,12 +538,19 @@
               "request": {
                 "method": "GET",
                 "header": [
-                  { "key": "Authorization", "value": "Bearer {{admin_token}}" }
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{admin_token}}"
+                  }
                 ],
                 "url": {
                   "raw": "{{base_url}}/especialidades",
-                  "host": ["{{base_url}}"],
-                  "path": ["especialidades"]
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "especialidades"
+                  ]
                 },
                 "description": "Lista todas las especialidades. Solo rol admin."
               },
@@ -419,8 +561,14 @@
               "request": {
                 "method": "POST",
                 "header": [
-                  { "key": "Content-Type", "value": "application/json" },
-                  { "key": "Authorization", "value": "Bearer {{token}}" }
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
                 ],
                 "body": {
                   "mode": "raw",
@@ -428,8 +576,12 @@
                 },
                 "url": {
                   "raw": "{{base_url}}/especialidades",
-                  "host": ["{{base_url}}"],
-                  "path": ["especialidades"]
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "especialidades"
+                  ]
                 },
                 "description": "Intenta crear una especialidad con el token de un paciente. Espera 403."
               },
@@ -440,8 +592,14 @@
               "request": {
                 "method": "POST",
                 "header": [
-                  { "key": "Content-Type", "value": "application/json" },
-                  { "key": "Authorization", "value": "Bearer {{admin_token}}" }
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{admin_token}}"
+                  }
                 ],
                 "body": {
                   "mode": "raw",
@@ -449,8 +607,12 @@
                 },
                 "url": {
                   "raw": "{{base_url}}/especialidades",
-                  "host": ["{{base_url}}"],
-                  "path": ["especialidades"]
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "especialidades"
+                  ]
                 },
                 "description": "Crea una especialidad nueva. Con el clinica.sql provisto, queda con id 2."
               },
@@ -461,8 +623,14 @@
               "request": {
                 "method": "PUT",
                 "header": [
-                  { "key": "Content-Type", "value": "application/json" },
-                  { "key": "Authorization", "value": "Bearer {{admin_token}}" }
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{admin_token}}"
+                  }
                 ],
                 "body": {
                   "mode": "raw",
@@ -470,8 +638,13 @@
                 },
                 "url": {
                   "raw": "{{base_url}}/especialidades/2",
-                  "host": ["{{base_url}}"],
-                  "path": ["especialidades", "2"]
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "especialidades",
+                    "2"
+                  ]
                 },
                 "description": "Actualiza la especialidad creada en el paso anterior."
               },
@@ -482,12 +655,20 @@
               "request": {
                 "method": "DELETE",
                 "header": [
-                  { "key": "Authorization", "value": "Bearer {{admin_token}}" }
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{admin_token}}"
+                  }
                 ],
                 "url": {
                   "raw": "{{base_url}}/especialidades/1",
-                  "host": ["{{base_url}}"],
-                  "path": ["especialidades", "1"]
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "especialidades",
+                    "1"
+                  ]
                 },
                 "description": "La especialidad 1 (Traumatologia) tiene un médico asociado en medico_especialidad en el clinica.sql provisto. Debe responder 409 controlado y NO eliminarla."
               },
@@ -498,12 +679,20 @@
               "request": {
                 "method": "DELETE",
                 "header": [
-                  { "key": "Authorization", "value": "Bearer {{admin_token}}" }
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{admin_token}}"
+                  }
                 ],
                 "url": {
                   "raw": "{{base_url}}/especialidades/2",
-                  "host": ["{{base_url}}"],
-                  "path": ["especialidades", "2"]
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "especialidades",
+                    "2"
+                  ]
                 },
                 "description": "Elimina la especialidad creada anteriormente (sin dependencias)."
               },
@@ -521,8 +710,12 @@
                 "header": [],
                 "url": {
                   "raw": "{{base_url}}/coberturas",
-                  "host": ["{{base_url}}"],
-                  "path": ["coberturas"]
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "coberturas"
+                  ]
                 },
                 "description": "Servicio de solo lectura, público (sin token), que lista las coberturas disponibles. Es el mismo endpoint reutilizado desde el registro de pacientes de Semana 1 (ver carpeta Semana 1 > Coberturas); se repite acá porque también forma parte del CRUD de coberturas de esta entrega."
               },
@@ -533,8 +726,14 @@
               "request": {
                 "method": "POST",
                 "header": [
-                  { "key": "Content-Type", "value": "application/json" },
-                  { "key": "Authorization", "value": "Bearer {{token}}" }
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
                 ],
                 "body": {
                   "mode": "raw",
@@ -542,8 +741,12 @@
                 },
                 "url": {
                   "raw": "{{base_url}}/coberturas",
-                  "host": ["{{base_url}}"],
-                  "path": ["coberturas"]
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "coberturas"
+                  ]
                 },
                 "description": "Intenta crear una cobertura con el token de un paciente. Espera 403."
               },
@@ -554,8 +757,14 @@
               "request": {
                 "method": "POST",
                 "header": [
-                  { "key": "Content-Type", "value": "application/json" },
-                  { "key": "Authorization", "value": "Bearer {{admin_token}}" }
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{admin_token}}"
+                  }
                 ],
                 "body": {
                   "mode": "raw",
@@ -563,8 +772,12 @@
                 },
                 "url": {
                   "raw": "{{base_url}}/coberturas",
-                  "host": ["{{base_url}}"],
-                  "path": ["coberturas"]
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "coberturas"
+                  ]
                 },
                 "description": "Crea una cobertura nueva. Con el clinica.sql provisto, queda con id 2."
               },
@@ -575,8 +788,14 @@
               "request": {
                 "method": "PUT",
                 "header": [
-                  { "key": "Content-Type", "value": "application/json" },
-                  { "key": "Authorization", "value": "Bearer {{admin_token}}" }
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{admin_token}}"
+                  }
                 ],
                 "body": {
                   "mode": "raw",
@@ -584,8 +803,13 @@
                 },
                 "url": {
                   "raw": "{{base_url}}/coberturas/2",
-                  "host": ["{{base_url}}"],
-                  "path": ["coberturas", "2"]
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "coberturas",
+                    "2"
+                  ]
                 },
                 "description": "Actualiza la cobertura creada en el paso anterior."
               },
@@ -596,12 +820,20 @@
               "request": {
                 "method": "DELETE",
                 "header": [
-                  { "key": "Authorization", "value": "Bearer {{admin_token}}" }
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{admin_token}}"
+                  }
                 ],
                 "url": {
                   "raw": "{{base_url}}/coberturas/1",
-                  "host": ["{{base_url}}"],
-                  "path": ["coberturas", "1"]
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "coberturas",
+                    "1"
+                  ]
                 },
                 "description": "La cobertura 1 (Jerarquicos) tiene un usuario asociado en el clinica.sql provisto. Debe responder 409 controlado y NO eliminarla."
               },
@@ -612,12 +844,20 @@
               "request": {
                 "method": "DELETE",
                 "header": [
-                  { "key": "Authorization", "value": "Bearer {{admin_token}}" }
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{admin_token}}"
+                  }
                 ],
                 "url": {
                   "raw": "{{base_url}}/coberturas/2",
-                  "host": ["{{base_url}}"],
-                  "path": ["coberturas", "2"]
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "coberturas",
+                    "2"
+                  ]
                 },
                 "description": "Elimina la cobertura creada anteriormente (sin dependencias)."
               },
@@ -633,16 +873,33 @@
               "request": {
                 "method": "GET",
                 "header": [
-                  { "key": "Authorization", "value": "Bearer {{admin_token}}" }
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{admin_token}}"
+                  }
                 ],
                 "url": {
                   "raw": "{{base_url}}/agenda?id_medico=3&fecha=2025-10-20",
-                  "host": ["{{base_url}}"],
-                  "path": ["agenda"],
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "agenda"
+                  ],
                   "query": [
-                    { "key": "id_medico", "value": "3" },
-                    { "key": "id_sede", "value": "1", "disabled": true },
-                    { "key": "fecha", "value": "2025-10-20" }
+                    {
+                      "key": "id_medico",
+                      "value": "3"
+                    },
+                    {
+                      "key": "id_sede",
+                      "value": "1",
+                      "disabled": true
+                    },
+                    {
+                      "key": "fecha",
+                      "value": "2025-10-20"
+                    }
                   ]
                 },
                 "description": "Lista la agenda filtrando por médico y fecha. Roles medico/operador/admin."
@@ -654,8 +911,14 @@
               "request": {
                 "method": "POST",
                 "header": [
-                  { "key": "Content-Type", "value": "application/json" },
-                  { "key": "Authorization", "value": "Bearer {{token}}" }
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token}}"
+                  }
                 ],
                 "body": {
                   "mode": "raw",
@@ -663,8 +926,12 @@
                 },
                 "url": {
                   "raw": "{{base_url}}/agenda",
-                  "host": ["{{base_url}}"],
-                  "path": ["agenda"]
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "agenda"
+                  ]
                 },
                 "description": "Un paciente no tiene acceso a la agenda médica. Espera 403."
               },
@@ -675,8 +942,14 @@
               "request": {
                 "method": "POST",
                 "header": [
-                  { "key": "Content-Type", "value": "application/json" },
-                  { "key": "Authorization", "value": "Bearer {{admin_token}}" }
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{admin_token}}"
+                  }
                 ],
                 "body": {
                   "mode": "raw",
@@ -684,8 +957,12 @@
                 },
                 "url": {
                   "raw": "{{base_url}}/agenda",
-                  "host": ["{{base_url}}"],
-                  "path": ["agenda"]
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "agenda"
+                  ]
                 },
                 "description": "Crea un rango horario de agenda. Con el clinica.sql provisto, queda con id 3."
               },
@@ -696,8 +973,14 @@
               "request": {
                 "method": "PUT",
                 "header": [
-                  { "key": "Content-Type", "value": "application/json" },
-                  { "key": "Authorization", "value": "Bearer {{admin_token}}" }
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{admin_token}}"
+                  }
                 ],
                 "body": {
                   "mode": "raw",
@@ -705,8 +988,13 @@
                 },
                 "url": {
                   "raw": "{{base_url}}/agenda/3",
-                  "host": ["{{base_url}}"],
-                  "path": ["agenda", "3"]
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "agenda",
+                    "3"
+                  ]
                 },
                 "description": "Actualiza el registro de agenda creado en el paso anterior."
               },
@@ -717,12 +1005,20 @@
               "request": {
                 "method": "DELETE",
                 "header": [
-                  { "key": "Authorization", "value": "Bearer {{admin_token}}" }
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{admin_token}}"
+                  }
                 ],
                 "url": {
                   "raw": "{{base_url}}/agenda/2",
-                  "host": ["{{base_url}}"],
-                  "path": ["agenda", "2"]
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "agenda",
+                    "2"
+                  ]
                 },
                 "description": "El registro de agenda 2 tiene un turno asociado en el clinica.sql provisto. Debe responder 409 controlado y NO eliminarlo."
               },
@@ -733,16 +1029,564 @@
               "request": {
                 "method": "DELETE",
                 "header": [
-                  { "key": "Authorization", "value": "Bearer {{admin_token}}" }
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{admin_token}}"
+                  }
                 ],
                 "url": {
                   "raw": "{{base_url}}/agenda/3",
-                  "host": ["{{base_url}}"],
-                  "path": ["agenda", "3"]
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "agenda",
+                    "3"
+                  ]
                 },
                 "description": "Elimina el registro de agenda creado anteriormente (sin turnos asociados)."
               },
               "response": []
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Semana 3 - Turnos, Historial y Notificaciones",
+      "item": [
+        {
+          "name": "Setup - Logins",
+          "item": [
+            {
+              "name": "Login Paciente (guarda token_paciente)",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/auth/login",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "auth",
+                    "login"
+                  ]
+                },
+                "description": "Login con Franco Friggeri (paciente). Guarda el token en {{token_paciente}}.",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"dni\": \"36000960\",\n  \"password\": \"Test1234!\"\n}"
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "var json = pm.response.json();",
+                      "if (json.datos && json.datos.token) {",
+                      "    pm.collectionVariables.set('token_paciente', json.datos.token);",
+                      "    console.log('token_paciente guardado');",
+                      "}"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ]
+            },
+            {
+              "name": "Login Médico (guarda token_medico)",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/auth/login",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "auth",
+                    "login"
+                  ]
+                },
+                "description": "Login con Ana Lopez (médico, sede 1). Guarda el token en {{token_medico}}.",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"dni\": \"20111222\",\n  \"password\": \"Test1234!\"\n}"
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "var json = pm.response.json();",
+                      "if (json.datos && json.datos.token) {",
+                      "    pm.collectionVariables.set('token_medico', json.datos.token);",
+                      "    console.log('token_medico guardado');",
+                      "}"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ]
+            },
+            {
+              "name": "Login Operador (guarda token_operador)",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/auth/login",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "auth",
+                    "login"
+                  ]
+                },
+                "description": "Login con Juan Perez (operador, sede 1). Guarda el token en {{token_operador}}.",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"dni\": \"15200548\",\n  \"password\": \"Test1234!\"\n}"
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "var json = pm.response.json();",
+                      "if (json.datos && json.datos.token) {",
+                      "    pm.collectionVariables.set('token_operador', json.datos.token);",
+                      "    console.log('token_operador guardado');",
+                      "}"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "Turnos",
+          "item": [
+            {
+              "name": "Alta Turno - RECHAZADO por horario (espera 400)",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token_paciente}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/turnos",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "turnos"
+                  ]
+                },
+                "description": "Hora 21:00 está fuera de la agenda (15:00-20:00). Debe devolver 400.",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"id_especialidad\": 1,\n  \"id_sede\": 1,\n  \"id_medico\": 3,\n  \"fecha\": \"2025-10-20\",\n  \"hora\": \"21:00\",\n  \"nota\": \"Me duele la rodilla\"\n}"
+                }
+              }
+            },
+            {
+              "name": "Alta Turno - ÉXITO",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token_paciente}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/turnos",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "turnos"
+                  ]
+                },
+                "description": "Hora 15:30 dentro de agenda. Debe devolver 201 y generar notificación. Guarda el id en {{turno_nuevo_id}}.",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"id_especialidad\": 1,\n  \"id_sede\": 1,\n  \"id_medico\": 3,\n  \"fecha\": \"2025-10-20\",\n  \"hora\": \"15:30\",\n  \"nota\": \"Me duele la rodilla\"\n}"
+                }
+              },
+              "event": [
+                {
+                  "listen": "test",
+                  "script": {
+                    "exec": [
+                      "var json = pm.response.json();",
+                      "if (json.datos && json.datos.id) {",
+                      "    pm.collectionVariables.set('turno_nuevo_id', json.datos.id);",
+                      "    console.log('turno_nuevo_id guardado:', json.datos.id);",
+                      "}"
+                    ],
+                    "type": "text/javascript"
+                  }
+                }
+              ]
+            },
+            {
+              "name": "Alta Turno - RECHAZADO por superposición (espera 400)",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token_paciente}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/turnos",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "turnos"
+                  ]
+                },
+                "description": "Mismo horario que el turno anterior. Debe devolver 400 por superposición.",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"id_especialidad\": 1,\n  \"id_sede\": 1,\n  \"id_medico\": 3,\n  \"fecha\": \"2025-10-20\",\n  \"hora\": \"15:30\",\n  \"nota\": \"Otro turno mismo horario\"\n}"
+                }
+              }
+            },
+            {
+              "name": "Cancelar Turno (genera notificación)",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token_paciente}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/turnos/{{turno_nuevo_id}}/cancelar",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "turnos",
+                    "{{turno_nuevo_id}}",
+                    "cancelar"
+                  ]
+                },
+                "description": "Cancela el turno recién creado. Debe devolver 200 y generar notificación."
+              }
+            },
+            {
+              "name": "Atender Turno (turno id=2 ya atendido en SQL seed)",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token_medico}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/turnos/2/atender",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "turnos",
+                    "2",
+                    "atender"
+                  ]
+                },
+                "description": "Intenta atender el turno 2. Como ya está atendido en el seed, debería devolver 400."
+              }
+            },
+            {
+              "name": "Mis Turnos (Paciente)",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token_paciente}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/turnos/mis-turnos",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "turnos",
+                    "mis-turnos"
+                  ]
+                },
+                "description": "Lista todos los turnos del paciente autenticado."
+              }
+            },
+            {
+              "name": "Turnos del Médico por fecha",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token_medico}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/turnos/medico?fecha=2025-10-20",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "turnos",
+                    "medico?fecha=2025-10-20"
+                  ]
+                },
+                "description": "Lista los turnos programados del médico para una fecha."
+              }
+            },
+            {
+              "name": "Turnos de Sede por fecha (Operador)",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token_operador}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/turnos/sede?fecha=2025-10-20",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "turnos",
+                    "sede?fecha=2025-10-20"
+                  ]
+                },
+                "description": "Lista los turnos de la sede del operador para una fecha."
+              }
+            }
+          ]
+        },
+        {
+          "name": "Historial Clínico",
+          "item": [
+            {
+              "name": "Alta Historial Clínico (turno atendido)",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token_medico}}"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/historial-clinico",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "historial-clinico"
+                  ]
+                },
+                "description": "Registra historial para el turno 2 (atendido). Nota: si ya existe en el seed, devolverá 400.",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"id_turno\": 2,\n  \"diagnostico\": \"Esguince leve\",\n  \"tratamiento\": \"Hielo y reposo\",\n  \"observaciones\": \"Volver en 10 dias\"\n}"
+                }
+              }
+            },
+            {
+              "name": "Consultar Historial (Paciente - ve todo su historial)",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token_paciente}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/historial-clinico/2",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "historial-clinico",
+                    "2"
+                  ]
+                },
+                "description": "El paciente (id=2) consulta su historial completo."
+              }
+            },
+            {
+              "name": "Consultar Historial (Médico - solo sus registros)",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token_medico}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/historial-clinico/2",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "historial-clinico",
+                    "2"
+                  ]
+                },
+                "description": "El médico consulta el historial del paciente 2, pero solo ve los turnos que él atendió."
+              }
+            },
+            {
+              "name": "Consultar Historial de OTRO paciente (espera 403)",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token_paciente}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/historial-clinico/1",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "historial-clinico",
+                    "1"
+                  ]
+                },
+                "description": "El paciente (id=2) intenta ver el historial del usuario 1. Debe devolver 403."
+              }
+            }
+          ]
+        },
+        {
+          "name": "Notificaciones",
+          "item": [
+            {
+              "name": "Listar Notificaciones (Paciente)",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token_paciente}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/notificaciones",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "notificaciones"
+                  ]
+                },
+                "description": "Lista las notificaciones del paciente, ordenadas de más reciente a más antigua."
+              }
+            },
+            {
+              "name": "Marcar Notificación como Leída",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token_paciente}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/notificaciones/1/leida",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "notificaciones",
+                    "1",
+                    "leida"
+                  ]
+                },
+                "description": "Marca la notificación id=1 como leída."
+              }
+            },
+            {
+              "name": "Listar Notificaciones (Médico)",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token_medico}}"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/notificaciones",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "notificaciones"
+                  ]
+                },
+                "description": "Lista las notificaciones del médico."
+              }
             }
           ]
         }
@@ -763,6 +1607,26 @@
     {
       "key": "admin_token",
       "value": "PEGAR_AQUI_UN_TOKEN_DE_ADMIN_MEDICO_U_OPERADOR",
+      "type": "string"
+    },
+    {
+      "key": "token_paciente",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "token_medico",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "token_operador",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "turno_nuevo_id",
+      "value": "",
       "type": "string"
     }
   ]
