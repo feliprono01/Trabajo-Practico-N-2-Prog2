@@ -37,6 +37,12 @@ app.use((req, res) => {
   });
 });
 
+// Manejador de errores no controlados
+app.use((err, req, res, next) => {
+  console.error('Error no controlado:', err);
+  res.status(500).json({ codigo: 500, estado: 'Error interno del servidor', datos: null });
+});
+
 // Arrancar servidor
 app.listen(PORT, () => {
   console.log(`Servidor corriendo en http://localhost:${PORT}`);
