@@ -35,11 +35,19 @@ const altaTurno = async (req, res) => {
     return respuesta(res, 400, 'Falta indicar el id_paciente (requerido si no sos paciente)', null);
   }
 
+  // El operador sólo puede sacar turnos en su propia sede
+  if (usuarioAuth.rol === 'operador' && Number(id_sede) !== Number(usuarioAuth.id_sede)) {
+    return respuesta(res, 403, 'No podés dar de alta turnos en otra sede', null);
+  }
+
   try {
     // 1. Obtener la cobertura del paciente (no se puede pisar)
-    const [pacientes] = await pool.query('SELECT id_cobertura FROM usuario WHERE id = ?', [id_paciente]);
+    const [pacientes] = await pool.query('SELECT id_cobertura, rol FROM usuario WHERE id = ?', [id_paciente]);
     if (pacientes.length === 0) {
       return respuesta(res, 404, 'Paciente no encontrado', null);
+    }
+    if (pacientes[0].rol !== 'paciente') {
+      return respuesta(res, 400, 'El id_paciente indicado no corresponde a un paciente', null);
     }
     const id_cobertura = pacientes[0].id_cobertura;
     if (!id_cobertura) {
@@ -58,17 +66,24 @@ const altaTurno = async (req, res) => {
       return respuesta(res, 400, 'El médico no tiene agenda disponible para esos datos', null);
     }
 
-    const agenda = agendas[0];
+    // 3. Validar rango horario: el médico puede tener varias franjas ese día
+    // (ej. mañana y tarde), así que buscamos la que contenga la hora pedida.
+    const agenda = agendas.find(
+      (a) => hora >= a.hora_entrada && hora < a.hora_salida
+    );
 
-    // 3. Validar rango horario
-    if (hora < agenda.hora_entrada || hora >= agenda.hora_salida) {
+    if (!agenda) {
       return respuesta(res, 400, 'El horario solicitado está fuera de la agenda del médico', null);
     }
 
-    // 4. Validar superposición (ya existe un turno confirmado/atendido en ese horario)
+    // 4. Validar superposición: ya hay un turno vigente del médico a esa hora
+    // (se controla contra el médico y no contra la franja, por si tiene varias)
     const [superpuestos] = await pool.query(
-      `SELECT id FROM turno WHERE id_agenda = ? AND fecha = ? AND hora = ? AND estado != 'cancelado'`,
-      [agenda.id, fecha, hora]
+      `SELECT t.id
+       FROM turno t
+       JOIN agenda a ON t.id_agenda = a.id
+       WHERE a.id_medico = ? AND t.fecha = ? AND t.hora = ? AND t.estado != 'cancelado'`,
+      [id_medico, fecha, hora]
     );
 
     if (superpuestos.length > 0) {
@@ -121,9 +136,13 @@ const cancelarTurno = async (req, res) => {
 
     const turno = turnos[0];
 
-    // Ya cancelado
+    // Sólo se puede cancelar un turno que siga confirmado
     if (turno.estado === 'cancelado') {
       return respuesta(res, 400, 'El turno ya se encuentra cancelado', null);
+    }
+
+    if (turno.estado === 'atendido') {
+      return respuesta(res, 400, 'No se puede cancelar un turno que ya fue atendido', null);
     }
 
     // 2. Validación de roles y permisos
