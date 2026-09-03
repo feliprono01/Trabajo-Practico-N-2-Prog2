@@ -10,6 +10,8 @@ const agendaRoutes = require('./src/routes/agendaRoutes');
 const notificacionRoutes = require('./src/routes/notificacionRoutes');
 const turnoRoutes = require('./src/routes/turnoRoutes');
 const historialClinicoRoutes = require('./src/routes/historialClinicoRoutes');
+const auditoriaRoutes = require('./src/routes/auditoriaRoutes');
+const reportesRoutes = require('./src/routes/reportesRoutes');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -27,6 +29,8 @@ app.use('/agenda', agendaRoutes);
 app.use('/notificaciones', notificacionRoutes);
 app.use('/turnos', turnoRoutes);
 app.use('/historial-clinico', historialClinicoRoutes);
+app.use('/auditoria', auditoriaRoutes);
+app.use('/reportes', reportesRoutes);
 
 // Ruta no encontrada
 app.use((req, res) => {

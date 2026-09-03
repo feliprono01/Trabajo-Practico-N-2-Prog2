@@ -1,6 +1,7 @@
 const { Router } = require('express');
 const { getCoberturas, crearCobertura, actualizarCobertura, eliminarCobertura } = require('../controllers/coberturaController');
 const { verificarToken, verificarRol } = require('../middlewares/authMiddleware');
+const auditoriaMiddleware = require('../middlewares/auditoriaMiddleware');
 
 const router = Router();
 
@@ -11,8 +12,8 @@ const router = Router();
 router.get('/', getCoberturas);
 
 // Rutas protegidas solo para 'admin'
-router.post('/', verificarToken, verificarRol('admin'), crearCobertura);
-router.put('/:id', verificarToken, verificarRol('admin'), actualizarCobertura);
-router.delete('/:id', verificarToken, verificarRol('admin'), eliminarCobertura);
+router.post('/', verificarToken, verificarRol('admin'), auditoriaMiddleware('cobertura'), crearCobertura);
+router.put('/:id', verificarToken, verificarRol('admin'), auditoriaMiddleware('cobertura'), actualizarCobertura);
+router.delete('/:id', verificarToken, verificarRol('admin'), auditoriaMiddleware('cobertura'), eliminarCobertura);
 
 module.exports = router;
