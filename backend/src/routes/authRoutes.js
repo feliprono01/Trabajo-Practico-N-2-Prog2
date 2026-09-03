@@ -1,11 +1,12 @@
 const { Router } = require('express');
 const { registro, login, perfil } = require('../controllers/authController');
 const { verificarToken, verificarRol } = require('../middlewares/authMiddleware');
+const auditoriaMiddleware = require('../middlewares/auditoriaMiddleware');
 
 const router = Router();
 
 // POST /auth/registro — Fase 4
-router.post('/registro', registro);
+router.post('/registro', auditoriaMiddleware('usuario'), registro);
 
 // POST /auth/login — Fase 5
 router.post('/login', login);
