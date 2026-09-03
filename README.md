@@ -51,7 +51,7 @@ Los roles vigentes en la base (`clinica.sql`) son `paciente`, `medico`, `operado
 - `medico`: gestiona su propia agenda (`/agenda`), atiende turnos (`PUT /turnos/:id/atender`) y carga historial clínico (`POST /historial-clinico`).
 - `operador`: gestiona la agenda de cualquier médico y sede, puede crear y cancelar turnos de su sede, y consulta los turnos de su sede por fecha (`GET /turnos/sede`).
 - `paciente`: puede solicitar turnos (`POST /turnos`), cancelar los propios, ver sus turnos (`GET /turnos/mis-turnos`), su historial clínico y sus notificaciones.
-- `admin`: único rol habilitado para el CRUD de sedes, especialidades y coberturas.
+- `admin`: único rol habilitado para el CRUD de sedes, especialidades y coberturas, y único con acceso a los logs de auditoría (`GET /auditoria`) y a los reportes y estadísticas (`GET /reportes/*`).
 
 ### Usuarios de prueba
 
@@ -70,12 +70,12 @@ Para generar hashes propios, si hiciera falta: `node -e "console.log(require('bc
 
 ## Colección de Postman
 
-Hay una única colección en `backend/Postman_TP2_Backend.postman_collection.json`, con una carpeta por cada semana de entrega (Semana 1, Semana 2 y Semana 3), en el mismo orden en que se liberaron las consignas. Dentro de cada carpeta los requests incluyen tanto los casos exitosos como los casos negativos pedidos por los criterios de aceptación (400, 401, 403, 404, 409).
+Hay una única colección en `backend/Postman_TP2_Backend.postman_collection.json`, con una carpeta por cada semana de entrega (Semana 1, Semana 2, Semana 3 y Semana 4), en el mismo orden en que se liberaron las consignas. Dentro de cada carpeta los requests incluyen tanto los casos exitosos como los casos negativos pedidos por los criterios de aceptación (400, 401, 403, 404, 409).
 
 Para correrla de punta a punta sin tocar nada a mano:
 
 1. Importar `clinica.sql` sobre una base limpia y levantar el servidor (`npm run dev`).
-2. Importar la colección en Postman y, sobre la colección completa, usar **Run collection** con las carpetas "Semana 1", "Semana 2" y "Semana 3" en ese orden. Los tokens se completan solos vía test scripts — no hace falta pegar nada a mano.
+2. Importar la colección en Postman y, sobre la colección completa, usar **Run collection** con las carpetas "Semana 1", "Semana 2", "Semana 3" y "Semana 4" en ese orden. Los tokens se completan solos vía test scripts — no hace falta pegar nada a mano.
 
 Variables de la colección:
 
@@ -83,6 +83,6 @@ Variables de la colección:
 - `token`: JWT de un usuario `paciente`. Se completa automáticamente al correr `Semana 1 > Auth > POST /auth/login POSITIVO`, y se reutiliza en las semanas siguientes para los casos negativos de rol (403).
 - `admin_token`: JWT del usuario `admin` (Marcos Gomez). Se completa automáticamente al correr `Semana 2 > Setup > POST /auth/login ADMIN`.
 - `medico_token`: JWT del usuario `medico` (Ana Lopez). Se completa automáticamente al correr `Semana 3 > Setup > POST /auth/login MEDICO`.
+- `token_paciente`: JWT del usuario `paciente` (Franco Friggeri). Se completa automáticamente al correr `Semana 3 > Setup - Logins > Login Paciente`, y se reutiliza en Semana 4 para los casos negativos de rol (403) de auditoría y reportes.
 
-Las colecciones de Semana 2 y Semana 3 están pensadas para correrse sobre una base recién importada desde `clinica.sql` (los IDs de los requests asumen los autoincrementales del script original).
-
+Las colecciones de Semana 2, Semana 3 y Semana 4 están pensadas para correrse sobre una base recién importada desde `clinica.sql` (los IDs de los requests asumen los autoincrementales del script original).
