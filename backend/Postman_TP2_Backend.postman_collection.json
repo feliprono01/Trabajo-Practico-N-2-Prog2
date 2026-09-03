@@ -2941,6 +2941,55 @@
                   "body": "{\n  \"codigo\": 403,\n  \"estado\": \"No tenés permisos para acceder a este recurso\",\n  \"datos\": null\n}"
                 }
               ]
+            },
+            {
+              "name": "GET /auditoria (rol no autorizado - espera 403)",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token_paciente}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/auditoria?entidad=usuario&fechaDesde=2025-01-01",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "auditoria"
+                  ],
+                  "query": [
+                    {
+                      "key": "entidad",
+                      "value": "usuario"
+                    },
+                    {
+                      "key": "fechaDesde",
+                      "value": "2025-01-01"
+                    }
+                  ]
+                },
+                "description": "Intenta consultar el log de auditoría con el token de un paciente (rol no admin). Espera 403."
+              },
+              "response": [
+                {
+                  "name": "Error - Rol no autorizado (403)",
+                  "originalRequest": {},
+                  "status": "Forbidden",
+                  "code": 403,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "body": "{\n  \"codigo\": 403,\n  \"estado\": \"No tenés permisos para acceder a este recurso\",\n  \"datos\": null\n}"
+                }
+              ]
             }
           ]
         },
@@ -2995,6 +3044,56 @@
                   ],
                   "body": "{\n  \"codigo\": 200,\n  \"estado\": \"ok\",\n  \"datos\": [\n    {\n      \"especialidad\": \"Traumatologia\",\n      \"cantidad\": 1\n    }\n  ]\n}"
                 },
+                {
+                  "name": "Error - Rol no autorizado (403)",
+                  "originalRequest": {},
+                  "status": "Forbidden",
+                  "code": 403,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "body": "{\n  \"codigo\": 403,\n  \"estado\": \"No tenés permisos para acceder a este recurso\",\n  \"datos\": null\n}"
+                }
+              ]
+            },
+            {
+              "name": "GET /reportes/turnos-especialidad (rol no autorizado - espera 403)",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token_paciente}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/reportes/turnos-especialidad?fechaDesde=2025-01-01&fechaHasta=2025-12-31",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "reportes",
+                    "turnos-especialidad"
+                  ],
+                  "query": [
+                    {
+                      "key": "fechaDesde",
+                      "value": "2025-01-01"
+                    },
+                    {
+                      "key": "fechaHasta",
+                      "value": "2025-12-31"
+                    }
+                  ]
+                },
+                "description": "Intenta consultar el reporte de turnos por especialidad con el token de un paciente (rol no admin). Espera 403."
+              },
+              "response": [
                 {
                   "name": "Error - Rol no autorizado (403)",
                   "originalRequest": {},
@@ -3076,6 +3175,56 @@
               ]
             },
             {
+              "name": "GET /reportes/turnos-sede (rol no autorizado - espera 403)",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token_paciente}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/reportes/turnos-sede?fechaDesde=2025-01-01&fechaHasta=2025-12-31",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "reportes",
+                    "turnos-sede"
+                  ],
+                  "query": [
+                    {
+                      "key": "fechaDesde",
+                      "value": "2025-01-01"
+                    },
+                    {
+                      "key": "fechaHasta",
+                      "value": "2025-12-31"
+                    }
+                  ]
+                },
+                "description": "Intenta consultar el reporte de turnos por sede con el token de un paciente (rol no admin). Espera 403."
+              },
+              "response": [
+                {
+                  "name": "Error - Rol no autorizado (403)",
+                  "originalRequest": {},
+                  "status": "Forbidden",
+                  "code": 403,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "body": "{\n  \"codigo\": 403,\n  \"estado\": \"No tenés permisos para acceder a este recurso\",\n  \"datos\": null\n}"
+                }
+              ]
+            },
+            {
               "name": "GET /reportes/ranking-medicos",
               "request": {
                 "method": "GET",
@@ -3140,6 +3289,56 @@
               ]
             },
             {
+              "name": "GET /reportes/ranking-medicos (rol no autorizado - espera 403)",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token_paciente}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/reportes/ranking-medicos?fechaDesde=2025-01-01&fechaHasta=2025-12-31",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "reportes",
+                    "ranking-medicos"
+                  ],
+                  "query": [
+                    {
+                      "key": "fechaDesde",
+                      "value": "2025-01-01"
+                    },
+                    {
+                      "key": "fechaHasta",
+                      "value": "2025-12-31"
+                    }
+                  ]
+                },
+                "description": "Intenta consultar el ranking de médicos con el token de un paciente (rol no admin). Espera 403."
+              },
+              "response": [
+                {
+                  "name": "Error - Rol no autorizado (403)",
+                  "originalRequest": {},
+                  "status": "Forbidden",
+                  "code": 403,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "body": "{\n  \"codigo\": 403,\n  \"estado\": \"No tenés permisos para acceder a este recurso\",\n  \"datos\": null\n}"
+                }
+              ]
+            },
+            {
               "name": "GET /reportes/tasa-cancelacion",
               "request": {
                 "method": "GET",
@@ -3187,6 +3386,56 @@
                   ],
                   "body": "{\n  \"codigo\": 200,\n  \"estado\": \"ok\",\n  \"datos\": {\n    \"total_turnos\": 1,\n    \"cancelados\": 0,\n    \"tasa_cancelacion_porcentaje\": 0\n  }\n}"
                 },
+                {
+                  "name": "Error - Rol no autorizado (403)",
+                  "originalRequest": {},
+                  "status": "Forbidden",
+                  "code": 403,
+                  "_postman_previewlanguage": "json",
+                  "header": [
+                    {
+                      "key": "Content-Type",
+                      "value": "application/json"
+                    }
+                  ],
+                  "body": "{\n  \"codigo\": 403,\n  \"estado\": \"No tenés permisos para acceder a este recurso\",\n  \"datos\": null\n}"
+                }
+              ]
+            },
+            {
+              "name": "GET /reportes/tasa-cancelacion (rol no autorizado - espera 403)",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token_paciente}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/reportes/tasa-cancelacion?fechaDesde=2025-01-01&fechaHasta=2025-12-31",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "reportes",
+                    "tasa-cancelacion"
+                  ],
+                  "query": [
+                    {
+                      "key": "fechaDesde",
+                      "value": "2025-01-01"
+                    },
+                    {
+                      "key": "fechaHasta",
+                      "value": "2025-12-31"
+                    }
+                  ]
+                },
+                "description": "Intenta consultar la tasa de cancelación con el token de un paciente (rol no admin). Espera 403."
+              },
+              "response": [
                 {
                   "name": "Error - Rol no autorizado (403)",
                   "originalRequest": {},
