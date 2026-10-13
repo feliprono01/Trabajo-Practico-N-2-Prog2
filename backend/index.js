@@ -1,5 +1,6 @@
 require('dotenv').config();
 const express = require('express');
+const cors = require('cors');
 
 const healthRoutes = require('./src/routes/healthRoutes');
 const authRoutes = require('./src/routes/authRoutes');
@@ -17,6 +18,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Middlewares globales
+app.use(cors({ origin: 'http://localhost:4200' }));
 app.use(express.json());
 
 // Rutas
