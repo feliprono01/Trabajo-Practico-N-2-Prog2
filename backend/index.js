@@ -13,12 +13,15 @@ const turnoRoutes = require('./src/routes/turnoRoutes');
 const historialClinicoRoutes = require('./src/routes/historialClinicoRoutes');
 const auditoriaRoutes = require('./src/routes/auditoriaRoutes');
 const reportesRoutes = require('./src/routes/reportesRoutes');
+const usuarioRoutes = require('./src/routes/usuarioRoutes');
+const medicoRoutes = require('./src/routes/medicoRoutes');
+const pacienteRoutes = require('./src/routes/pacienteRoutes');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Middlewares globales
-app.use(cors({ origin: 'http://localhost:4200' }));
+app.use(cors({ origin: process.env.FRONTEND_URL || 'http://localhost:4200' }));
 app.use(express.json());
 
 // Rutas
@@ -33,6 +36,9 @@ app.use('/turnos', turnoRoutes);
 app.use('/historial-clinico', historialClinicoRoutes);
 app.use('/auditoria', auditoriaRoutes);
 app.use('/reportes', reportesRoutes);
+app.use('/usuarios', usuarioRoutes);
+app.use('/medicos', medicoRoutes);
+app.use('/pacientes', pacienteRoutes);
 
 // Ruta no encontrada
 app.use((req, res) => {

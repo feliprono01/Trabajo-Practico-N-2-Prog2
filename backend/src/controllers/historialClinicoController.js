@@ -80,9 +80,9 @@ const consultarHistorial = async (req, res) => {
 
     // 2. Armar la consulta dependiendo del rol
     let query = `
-      SELECT h.id, h.diagnostico, h.tratamiento, h.observaciones, h.fecha_registro,
+      SELECT h.id, h.id_turno, h.diagnostico, h.tratamiento, h.observaciones, h.fecha_registro,
              m.nombre AS medico_nombre, m.apellido AS medico_apellido,
-             e.descripcion AS especialidad, t.fecha AS fecha_turno
+             e.descripcion AS especialidad, t.fecha AS fecha_turno, t.hora AS hora_turno
       FROM historial_clinico h
       JOIN usuario m ON h.id_medico = m.id
       JOIN turno t ON h.id_turno = t.id

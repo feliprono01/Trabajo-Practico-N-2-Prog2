@@ -1,5 +1,5 @@
 const { Router } = require('express');
-const { registro, login, perfil } = require('../controllers/authController');
+const { registro, login, perfil, actualizarPerfil } = require('../controllers/authController');
 const { verificarToken, verificarRol } = require('../middlewares/authMiddleware');
 const auditoriaMiddleware = require('../middlewares/auditoriaMiddleware');
 
@@ -13,6 +13,9 @@ router.post('/login', login);
 
 // GET /auth/perfil — Fase 6 (requiere token válido)
 router.get('/perfil', verificarToken, perfil);
+
+// PUT /auth/perfil — autoedición de datos propios (email, password, telefono, cobertura)
+router.put('/perfil', verificarToken, auditoriaMiddleware('usuario'), actualizarPerfil);
 
 // GET /auth/admin-test — Fase 6 (prueba de verificarRol, solo admin)
 router.get('/admin-test', verificarToken, verificarRol('admin'), (req, res) => {

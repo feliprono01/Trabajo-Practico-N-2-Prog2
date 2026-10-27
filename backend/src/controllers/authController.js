@@ -150,4 +150,74 @@ const perfil = async (req, res) => {
   }
 };
 
-module.exports = { registro, login, perfil };
+// ============================================================
+// PUT /auth/perfil
+// Permite que el usuario autenticado actualice sus propios datos.
+// Solo se aceptan: email, password, telefono, id_cobertura
+// (independientemente del rol, aunque en la práctica solo la UI de paciente lo usa).
+// ============================================================
+const actualizarPerfil = async (req, res) => {
+  const { email, password, telefono, id_cobertura } = req.body;
+
+  if (!email && !password && !telefono && !id_cobertura) {
+    return respuesta(res, 400, 'No se recibió ningún campo para actualizar', null);
+  }
+
+  try {
+    if (email) {
+      const [porEmail] = await pool.query('SELECT id FROM usuario WHERE email = ? AND id <> ?', [email, req.usuario.id]);
+      if (porEmail.length > 0) {
+        return respuesta(res, 400, 'El email ya está registrado', null);
+      }
+    }
+
+    if (id_cobertura) {
+      const [cobertura] = await pool.query('SELECT id FROM cobertura WHERE id = ?', [id_cobertura]);
+      if (cobertura.length === 0) {
+        return respuesta(res, 400, 'La cobertura indicada no existe', null);
+      }
+    }
+
+    const campos = [];
+    const valores = [];
+
+    if (email) {
+      campos.push('email = ?');
+      valores.push(email);
+    }
+    if (password) {
+      const passwordHash = await bcrypt.hash(password, 10);
+      campos.push('password = ?');
+      valores.push(passwordHash);
+    }
+    if (telefono) {
+      campos.push('telefono = ?');
+      valores.push(telefono);
+    }
+    if (id_cobertura) {
+      campos.push('id_cobertura = ?');
+      valores.push(id_cobertura);
+    }
+
+    valores.push(req.usuario.id);
+    await pool.query(`UPDATE usuario SET ${campos.join(', ')} WHERE id = ?`, valores);
+
+    const [usuarios] = await pool.query(
+      `SELECT u.id, u.nombre, u.apellido, u.dni, u.email, u.telefono,
+              u.fecha_nacimiento, u.rol, u.id_sede, u.id_cobertura,
+              s.nombre AS sede, c.nombre AS cobertura
+       FROM usuario u
+       LEFT JOIN sede s ON s.id = u.id_sede
+       LEFT JOIN cobertura c ON c.id = u.id_cobertura
+       WHERE u.id = ?`,
+      [req.usuario.id]
+    );
+
+    return respuesta(res, 200, 'ok', usuarios[0]);
+  } catch (error) {
+    console.error('Error en actualizarPerfil:', error.message);
+    return respuesta(res, 500, 'Error interno del servidor', null);
+  }
+};
+
+module.exports = { registro, login, perfil, actualizarPerfil };

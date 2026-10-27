@@ -5,12 +5,12 @@ const auditoriaMiddleware = require('../middlewares/auditoriaMiddleware');
 
 const router = Router();
 
-// Todas las rutas protegidas solo para 'admin'
-router.use(verificarToken, verificarRol('admin'));
+// Lectura disponible para cualquier usuario logueado
+router.get('/', verificarToken, obtenerEspecialidades);
 
-router.get('/', obtenerEspecialidades);
-router.post('/', auditoriaMiddleware('especialidad'), crearEspecialidad);
-router.put('/:id', auditoriaMiddleware('especialidad'), actualizarEspecialidad);
-router.delete('/:id', auditoriaMiddleware('especialidad'), eliminarEspecialidad);
+// Alta, modificación y baja siguen siendo exclusivas del rol admin
+router.post('/', verificarToken, verificarRol('admin'), auditoriaMiddleware('especialidad'), crearEspecialidad);
+router.put('/:id', verificarToken, verificarRol('admin'), auditoriaMiddleware('especialidad'), actualizarEspecialidad);
+router.delete('/:id', verificarToken, verificarRol('admin'), auditoriaMiddleware('especialidad'), eliminarEspecialidad);
 
 module.exports = router;

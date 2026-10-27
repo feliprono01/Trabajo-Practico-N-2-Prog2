@@ -40,6 +40,27 @@ const listarNotificaciones = async (req, res) => {
 };
 
 // ============================================================
+// GET /notificaciones/no-leidas
+// Devuelve solo la cantidad de notificaciones no leídas del usuario autenticado
+// (liviano para pollear desde la campanita del header).
+// ============================================================
+const contarNoLeidas = async (req, res) => {
+  const { id } = req.usuario;
+
+  try {
+    const [filas] = await pool.query(
+      `SELECT COUNT(*) AS cantidad FROM notificacion WHERE id_usuario = ? AND leida = 0`,
+      [id]
+    );
+
+    return respuesta(res, 200, 'ok', { cantidad: filas[0].cantidad });
+  } catch (error) {
+    console.error('Error al contar notificaciones no leídas:', error.message);
+    return respuesta(res, 500, 'Error interno del servidor', null);
+  }
+};
+
+// ============================================================
 // PUT /notificaciones/:id/leida
 // Marca una notificación como leída
 // ============================================================
@@ -74,5 +95,6 @@ const marcarLeida = async (req, res) => {
 module.exports = {
   crearNotificacion,
   listarNotificaciones,
+  contarNoLeidas,
   marcarLeida
 };

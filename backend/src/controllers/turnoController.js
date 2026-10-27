@@ -146,11 +146,17 @@ const cancelarTurno = async (req, res) => {
     }
 
     // 2. Validación de roles y permisos
+    // Un médico puede atender en más de una sede: puede operar sobre sus propios turnos
+    // en cualquiera de las sedes donde tenga agenda, no solo en la sede fija de su usuario.
     if (usuarioAuth.rol === 'paciente') {
       if (turno.id_paciente !== usuarioAuth.id) {
         return respuesta(res, 403, 'No podés cancelar un turno que no te pertenece', null);
       }
-    } else if (usuarioAuth.rol === 'operador' || usuarioAuth.rol === 'medico') {
+    } else if (usuarioAuth.rol === 'medico') {
+      if (turno.id_medico !== usuarioAuth.id) {
+        return respuesta(res, 403, 'No podés cancelar turnos de otro médico', null);
+      }
+    } else if (usuarioAuth.rol === 'operador') {
       if (turno.id_sede !== usuarioAuth.id_sede) {
         return respuesta(res, 403, 'No podés cancelar turnos de otra sede', null);
       }
@@ -255,23 +261,31 @@ const listarTurnosPaciente = async (req, res) => {
 // ============================================================
 const listarTurnosMedico = async (req, res) => {
   const usuarioAuth = req.usuario;
-  const { fecha } = req.query;
+  const { fecha, id_sede } = req.query;
 
   if (!fecha) {
     return respuesta(res, 400, 'Se requiere la fecha para filtrar (query param: ?fecha=YYYY-MM-DD)', null);
   }
 
   try {
-    const [turnos] = await pool.query(
-      `SELECT t.id, t.fecha, t.hora, t.estado, t.nota, p.nombre AS paciente_nombre, 
-              p.apellido AS paciente_apellido, p.dni AS paciente_dni
-       FROM turno t
-       JOIN agenda a ON t.id_agenda = a.id
-       JOIN usuario p ON t.id_paciente = p.id
-       WHERE a.id_medico = ? AND t.fecha = ?
-       ORDER BY t.hora ASC`,
-      [usuarioAuth.id, fecha]
-    );
+    let query = `
+      SELECT t.id, t.fecha, t.hora, t.estado, t.nota, p.nombre AS paciente_nombre,
+             p.apellido AS paciente_apellido, p.dni AS paciente_dni,
+             p.fecha_nacimiento AS paciente_fecha_nacimiento, a.id_sede, s.nombre AS sede
+      FROM turno t
+      JOIN agenda a ON t.id_agenda = a.id
+      JOIN usuario p ON t.id_paciente = p.id
+      JOIN sede s ON a.id_sede = s.id
+      WHERE a.id_medico = ? AND t.fecha = ?`;
+    const params = [usuarioAuth.id, fecha];
+
+    if (id_sede) {
+      query += ' AND a.id_sede = ?';
+      params.push(id_sede);
+    }
+    query += ' ORDER BY t.hora ASC';
+
+    const [turnos] = await pool.query(query, params);
 
     return respuesta(res, 200, 'ok', turnos);
   } catch (error) {
@@ -293,7 +307,7 @@ const listarTurnosSede = async (req, res) => {
 
   try {
     const [turnos] = await pool.query(
-      `SELECT t.id, t.fecha, t.hora, t.estado, m.nombre AS medico_nombre, m.apellido AS medico_apellido,
+      `SELECT t.id, t.fecha, t.hora, t.estado, a.id_medico, m.nombre AS medico_nombre, m.apellido AS medico_apellido,
               p.nombre AS paciente_nombre, p.apellido AS paciente_apellido
        FROM turno t
        JOIN agenda a ON t.id_agenda = a.id

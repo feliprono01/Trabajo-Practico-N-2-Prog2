@@ -65,6 +65,12 @@ const eliminarCobertura = async (req, res) => {
       return respuesta(res, 409, 'No se puede eliminar la cobertura porque hay usuarios asociados a ella', null);
     }
 
+    // Verificar si algún turno tiene asociada esta cobertura
+    const [turnos] = await pool.query('SELECT id FROM turno WHERE id_cobertura = ?', [id]);
+    if (turnos.length > 0) {
+      return respuesta(res, 409, 'No se puede eliminar la cobertura porque hay turnos asociados a ella', null);
+    }
+
     const [result] = await pool.query('DELETE FROM cobertura WHERE id = ?', [id]);
     if (result.affectedRows === 0) {
       return respuesta(res, 404, 'Cobertura no encontrada', null);

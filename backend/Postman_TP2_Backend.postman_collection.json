@@ -1,7 +1,7 @@
 {
   "info": {
     "_postman_id": "a1e93c40-0a2e-4b7a-9c3d-5f2b8e6d1234",
-    "name": "TP2 - Clinica Backend (Semana 1 + Semana 2 + Semana 3)",
+    "name": "TP2 - Clinica Backend (Semana 1 a 4 completas)",
     "description": "Colección única del backend del Trabajo Práctico N°2 - Sistema de Gestión de Turnos Médicos. Organizada en dos carpetas de nivel superior, una por semana de entrega, en el mismo orden en que se fueron liberando las consignas.\n\nPara correrla de punta a punta sin tocar nada a mano: 1) importar backend/clinica.sql, 2) levantar el servidor con 'npm run dev', 3) 'Run collection' sobre las dos carpetas en orden. Los tokens se completan solos.\n\nLos usuarios que trae clinica.sql (operador, paciente, medico y admin) tienen todos la contraseña de prueba: Test1234!\n\nVariables de colección:\n- base_url: URL del servidor (por defecto http://localhost:3000).\n- token: JWT de un usuario con rol 'paciente'. Se completa automáticamente al ejecutar 'POST /auth/login POSITIVO' (carpeta Semana 1 > Auth), y se reutiliza en Semana 2 para los casos negativos de rol (403).\n- admin_token: JWT del usuario con rol 'admin' (Marcos Gomez, dni 18222333). Se completa automáticamente al ejecutar 'Semana 2 > Setup > POST /auth/login ADMIN'.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
@@ -3455,6 +3455,892 @@
           ]
         }
       ]
+    },
+    {
+      "name": "Semana 2 a 4 (ampliación) - Usuarios, médicos, pacientes, disponibilidad y reglas nuevas",
+      "item": [
+        {
+          "name": "Usuarios (admin)",
+          "item": [
+            {
+              "name": "GET /usuarios (listado paginado con filtros)",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{admin_token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/usuarios?page=1&pageSize=20&rol=medico",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "usuarios"
+                  ],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "1"
+                    },
+                    {
+                      "key": "pageSize",
+                      "value": "20"
+                    },
+                    {
+                      "key": "rol",
+                      "value": "medico"
+                    }
+                  ]
+                },
+                "description": "Listado paginado de usuarios. Filtros opcionales: nombre, apellido, rol, id_sede."
+              }
+            },
+            {
+              "name": "GET /usuarios NEGATIVO (sin token)",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/usuarios",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "usuarios"
+                  ]
+                },
+                "description": "Debe responder 401 por falta de token."
+              }
+            },
+            {
+              "name": "POST /usuarios (alta de operador)",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{admin_token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/usuarios",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "usuarios"
+                  ]
+                },
+                "description": "Alta de un usuario operador. Requiere id_sede. Queda auditado (ALTA sobre entidad usuario).",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"nombre\": \"Lucia\",\n  \"apellido\": \"Alvarez\",\n  \"dni\": \"33111222\",\n  \"email\": \"lalvarez@clinica.com\",\n  \"password\": \"Test1234!\",\n  \"fecha_nacimiento\": \"1993-05-20\",\n  \"telefono\": \"3424111000\",\n  \"rol\": \"operador\",\n  \"id_sede\": 2\n}"
+                }
+              }
+            },
+            {
+              "name": "POST /usuarios (alta de médico con especialidades)",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{admin_token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/usuarios",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "usuarios"
+                  ]
+                },
+                "description": "Alta de un médico con una o más especialidades. Inserta también en medico_especialidad.",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"nombre\": \"Martin\",\n  \"apellido\": \"Suarez\",\n  \"dni\": \"34222333\",\n  \"email\": \"msuarez@clinica.com\",\n  \"password\": \"Test1234!\",\n  \"fecha_nacimiento\": \"1988-09-12\",\n  \"telefono\": \"3424222111\",\n  \"rol\": \"medico\",\n  \"id_sede\": 1,\n  \"especialidades\": [\n    1,\n    2\n  ]\n}"
+                }
+              }
+            },
+            {
+              "name": "POST /usuarios NEGATIVO (admin con sede)",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{admin_token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/usuarios",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "usuarios"
+                  ]
+                },
+                "description": "Debe responder 400: un admin no debe tener sede asignada.",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"nombre\": \"Error\",\n  \"apellido\": \"Test\",\n  \"dni\": \"99999999\",\n  \"email\": \"error@clinica.com\",\n  \"password\": \"Test1234!\",\n  \"fecha_nacimiento\": \"1990-01-01\",\n  \"telefono\": \"3424000000\",\n  \"rol\": \"admin\",\n  \"id_sede\": 1\n}"
+                }
+              }
+            },
+            {
+              "name": "POST /usuarios NEGATIVO (rol paciente no permitido)",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{admin_token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/usuarios",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "usuarios"
+                  ]
+                },
+                "description": "Debe responder 400: el alta de paciente se hace por /auth/registro, no por acá.",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"nombre\": \"Error\",\n  \"apellido\": \"Test\",\n  \"dni\": \"99999998\",\n  \"email\": \"error2@clinica.com\",\n  \"password\": \"Test1234!\",\n  \"fecha_nacimiento\": \"1990-01-01\",\n  \"telefono\": \"3424000000\",\n  \"rol\": \"paciente\",\n  \"id_sede\": 1\n}"
+                }
+              }
+            },
+            {
+              "name": "POST /usuarios NEGATIVO (403 sin rol admin)",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token_paciente}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/usuarios",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "usuarios"
+                  ]
+                },
+                "description": "Debe responder 403: solo admin puede dar de alta usuarios de gestión.",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"nombre\": \"X\",\n  \"apellido\": \"Y\",\n  \"dni\": \"1\",\n  \"email\": \"x@y.com\",\n  \"password\": \"Test1234!\",\n  \"fecha_nacimiento\": \"1990-01-01\",\n  \"rol\": \"operador\",\n  \"id_sede\": 1\n}"
+                }
+              }
+            },
+            {
+              "name": "PUT /usuarios/:id (editar datos de un paciente)",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{admin_token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/usuarios/2",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "usuarios",
+                    "2"
+                  ]
+                },
+                "description": "El admin puede editar cualquier usuario, incluidos pacientes. Reemplazar :id por un id real de paciente.",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"telefono\": \"3424999999\",\n  \"id_cobertura\": 1\n}"
+                }
+              }
+            }
+          ],
+          "description": ""
+        },
+        {
+          "name": "Médicos",
+          "item": [
+            {
+              "name": "GET /medicos (listado con especialidades)",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token_paciente}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/medicos",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "medicos"
+                  ]
+                },
+                "description": "Accesible a cualquier rol logueado. Devuelve médicos con sus especialidades."
+              }
+            },
+            {
+              "name": "GET /medicos filtrado por especialidad y sede",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token_operador}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/medicos?id_especialidad=1&id_sede=1",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "medicos"
+                  ],
+                  "query": [
+                    {
+                      "key": "id_especialidad",
+                      "value": "1"
+                    },
+                    {
+                      "key": "id_sede",
+                      "value": "1"
+                    }
+                  ]
+                },
+                "description": "Filtra médicos que tengan esa especialidad y agenda cargada en esa sede."
+              }
+            },
+            {
+              "name": "GET /medicos NEGATIVO (sin token)",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/medicos",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "medicos"
+                  ]
+                },
+                "description": "Debe responder 401."
+              }
+            }
+          ],
+          "description": ""
+        },
+        {
+          "name": "Pacientes (búsqueda)",
+          "item": [
+            {
+              "name": "GET /pacientes/buscar?dni=",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token_operador}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/pacientes/buscar?dni=36000960",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "pacientes",
+                    "buscar"
+                  ],
+                  "query": [
+                    {
+                      "key": "dni",
+                      "value": "36000960"
+                    }
+                  ]
+                },
+                "description": "Búsqueda exacta por DNI. Accesible a operador, médico y admin."
+              }
+            },
+            {
+              "name": "GET /pacientes/buscar?apellido=",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token_medico}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/pacientes/buscar?apellido=Diaz",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "pacientes",
+                    "buscar"
+                  ],
+                  "query": [
+                    {
+                      "key": "apellido",
+                      "value": "Diaz"
+                    }
+                  ]
+                },
+                "description": "Búsqueda parcial por apellido."
+              }
+            },
+            {
+              "name": "GET /pacientes/buscar NEGATIVO (403 paciente)",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token_paciente}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/pacientes/buscar?dni=36000960",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "pacientes",
+                    "buscar"
+                  ],
+                  "query": [
+                    {
+                      "key": "dni",
+                      "value": "36000960"
+                    }
+                  ]
+                },
+                "description": "Debe responder 403: un paciente no puede buscar a otros pacientes."
+              }
+            }
+          ],
+          "description": ""
+        },
+        {
+          "name": "Sedes y especialidades (lectura abierta)",
+          "item": [
+            {
+              "name": "GET /sedes con token de paciente",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token_paciente}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/sedes",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "sedes"
+                  ]
+                },
+                "description": "Antes requería rol admin; ahora cualquier usuario logueado puede leer el listado."
+              }
+            },
+            {
+              "name": "GET /especialidades con token de paciente",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token_paciente}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/especialidades",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "especialidades"
+                  ]
+                },
+                "description": "Antes requería rol admin; ahora cualquier usuario logueado puede leer el listado."
+              }
+            },
+            {
+              "name": "DELETE /especialidades/:id NEGATIVO (en uso en agenda)",
+              "request": {
+                "method": "DELETE",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{admin_token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/especialidades/1",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "especialidades",
+                    "1"
+                  ]
+                },
+                "description": "Debe responder 409: la especialidad 1 (Traumatologia) está en uso en medico_especialidad y en agenda."
+              }
+            }
+          ],
+          "description": ""
+        },
+        {
+          "name": "Agenda - disponibilidad y reglas nuevas",
+          "item": [
+            {
+              "name": "GET /agenda (ahora enriquecida con nombres)",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{admin_token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/agenda?id_sede=1",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "agenda"
+                  ],
+                  "query": [
+                    {
+                      "key": "id_sede",
+                      "value": "1"
+                    }
+                  ]
+                },
+                "description": "La respuesta ahora incluye medico_nombre, medico_apellido, especialidad y sede, no solo ids."
+              }
+            },
+            {
+              "name": "GET /agenda/fechas-disponibles",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token_paciente}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/agenda/fechas-disponibles?id_medico=3&id_especialidad=1&id_sede=1",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "agenda",
+                    "fechas-disponibles"
+                  ],
+                  "query": [
+                    {
+                      "key": "id_medico",
+                      "value": "3"
+                    },
+                    {
+                      "key": "id_especialidad",
+                      "value": "1"
+                    },
+                    {
+                      "key": "id_sede",
+                      "value": "1"
+                    }
+                  ]
+                },
+                "description": "Fechas futuras en las que el médico 3 (Ana Lopez) tiene agenda para Traumatologia en Sede Centro."
+              }
+            },
+            {
+              "name": "GET /agenda/horarios-disponibles",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token_paciente}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/agenda/horarios-disponibles?id_medico=3&fecha=2026-10-27&id_especialidad=1&id_sede=1",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "agenda",
+                    "horarios-disponibles"
+                  ],
+                  "query": [
+                    {
+                      "key": "id_medico",
+                      "value": "3"
+                    },
+                    {
+                      "key": "fecha",
+                      "value": "2026-10-27"
+                    },
+                    {
+                      "key": "id_especialidad",
+                      "value": "1"
+                    },
+                    {
+                      "key": "id_sede",
+                      "value": "1"
+                    }
+                  ]
+                },
+                "description": "Horarios libres de 30 minutos para esa fecha, descontando los turnos ya confirmados."
+              }
+            },
+            {
+              "name": "POST /agenda NEGATIVO (operador de otra sede)",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token_operador}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/agenda",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "agenda"
+                  ]
+                },
+                "description": "El operador de prueba pertenece a la Sede Centro (id_sede=1); pedir agenda en la Sede Norte (id_sede=2) debe responder 403.",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"hora_entrada\": \"09:00\",\n  \"hora_salida\": \"12:00\",\n  \"fecha\": \"2026-11-05\",\n  \"id_medico\": 3,\n  \"id_especialidad\": 1,\n  \"id_sede\": 2\n}"
+                }
+              }
+            },
+            {
+              "name": "POST /agenda NEGATIVO (hora_salida <= hora_entrada)",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token_medico}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/agenda",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "agenda"
+                  ]
+                },
+                "description": "Debe responder 400: la hora de salida debe ser posterior a la de entrada.",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"hora_entrada\": \"10:00\",\n  \"hora_salida\": \"09:00\",\n  \"fecha\": \"2026-11-05\",\n  \"id_medico\": 3,\n  \"id_especialidad\": 1,\n  \"id_sede\": 1\n}"
+                }
+              }
+            }
+          ],
+          "description": ""
+        },
+        {
+          "name": "Auditoría (paginada)",
+          "item": [
+            {
+              "name": "GET /auditoria paginada",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{admin_token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/auditoria?page=1&pageSize=10",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "auditoria"
+                  ],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "1"
+                    },
+                    {
+                      "key": "pageSize",
+                      "value": "10"
+                    }
+                  ]
+                },
+                "description": "La respuesta ahora trae { items, total, page, pageSize } y el nombre/apellido de quien hizo cada acción."
+              }
+            }
+          ],
+          "description": ""
+        },
+        {
+          "name": "Notificaciones - contador",
+          "item": [
+            {
+              "name": "GET /notificaciones/no-leidas",
+              "request": {
+                "method": "GET",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token_paciente}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/notificaciones/no-leidas",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "notificaciones",
+                    "no-leidas"
+                  ]
+                },
+                "description": "Devuelve { cantidad } de notificaciones no leídas del usuario autenticado."
+              }
+            }
+          ],
+          "description": ""
+        },
+        {
+          "name": "Perfil propio (paciente)",
+          "item": [
+            {
+              "name": "PUT /auth/perfil (autoedición)",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token_paciente}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/auth/perfil",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "auth",
+                    "perfil"
+                  ]
+                },
+                "description": "El usuario autenticado actualiza sus propios datos (email, password, telefono, id_cobertura).",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"telefono\": \"3424123123\",\n  \"id_cobertura\": 2\n}"
+                }
+              }
+            },
+            {
+              "name": "PUT /auth/perfil NEGATIVO (sin campos)",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token_paciente}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/auth/perfil",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "auth",
+                    "perfil"
+                  ]
+                },
+                "description": "Debe responder 400: no se recibió ningún campo para actualizar.",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{}"
+                }
+              }
+            }
+          ],
+          "description": ""
+        }
+      ],
+      "description": "Carpeta agregada en la entrega de semanas 2 a 4. Para que los tokens ({{admin_token}}, {{token_medico}}, {{token_operador}}, {{token_paciente}}) estén seteados, correr antes al menos los requests de login de las carpetas Setup de Semana 2, 3 y 4 (o loguear manualmente). Requiere clinica.sql reimportado con la migración a columnas int."
     }
   ],
   "variable": [

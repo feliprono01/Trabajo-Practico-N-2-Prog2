@@ -1,15 +1,27 @@
 const { Router } = require('express');
-const { obtenerAgenda, crearAgenda, actualizarAgenda, eliminarAgenda } = require('../controllers/agendaController');
+const {
+  obtenerAgenda,
+  crearAgenda,
+  actualizarAgenda,
+  eliminarAgenda,
+  obtenerFechasDisponibles,
+  obtenerHorariosDisponibles,
+} = require('../controllers/agendaController');
 const { verificarToken, verificarRol } = require('../middlewares/authMiddleware');
+const auditoriaMiddleware = require('../middlewares/auditoriaMiddleware');
 
 const router = Router();
 
-// Todas las rutas de agenda requieren al menos rol medico, operador o admin
-router.use(verificarToken, verificarRol('medico', 'operador', 'admin'));
+router.use(verificarToken);
 
-router.get('/', obtenerAgenda);
-router.post('/', crearAgenda);
-router.put('/:id', actualizarAgenda);
-router.delete('/:id', eliminarAgenda);
+// Consulta de disponibilidad: accesible también a paciente y operador (para el wizard de turno)
+router.get('/fechas-disponibles', verificarRol('medico', 'operador', 'admin', 'paciente'), obtenerFechasDisponibles);
+router.get('/horarios-disponibles', verificarRol('medico', 'operador', 'admin', 'paciente'), obtenerHorariosDisponibles);
+
+// Resto de la gestión de agenda: medico, operador y admin
+router.get('/', verificarRol('medico', 'operador', 'admin'), obtenerAgenda);
+router.post('/', verificarRol('medico', 'operador', 'admin'), auditoriaMiddleware('agenda'), crearAgenda);
+router.put('/:id', verificarRol('medico', 'operador', 'admin'), auditoriaMiddleware('agenda'), actualizarAgenda);
+router.delete('/:id', verificarRol('medico', 'operador', 'admin'), auditoriaMiddleware('agenda'), eliminarAgenda);
 
 module.exports = router;

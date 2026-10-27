@@ -9,6 +9,9 @@ router.use(verificarToken);
 // Obtener notificaciones del usuario
 router.get('/', notificacionController.listarNotificaciones);
 
+// Cantidad de notificaciones no leídas (para el badge del header)
+router.get('/no-leidas', notificacionController.contarNoLeidas);
+
 // Marcar notificación como leída
 router.put('/:id/leida', notificacionController.marcarLeida);
 

@@ -71,6 +71,12 @@ const eliminarEspecialidad = async (req, res) => {
       return respuesta(res, 409, 'No se puede eliminar la especialidad porque hay médicos asociados a ella', null);
     }
 
+    // Validar dependencias: agenda
+    const [agenda] = await pool.query('SELECT id FROM agenda WHERE id_especialidad = ?', [id]);
+    if (agenda.length > 0) {
+      return respuesta(res, 409, 'No se puede eliminar la especialidad porque está en uso en la agenda', null);
+    }
+
     const [result] = await pool.query('DELETE FROM especialidad WHERE id = ?', [id]);
     if (result.affectedRows === 0) {
       return respuesta(res, 404, 'Especialidad no encontrada', null);
