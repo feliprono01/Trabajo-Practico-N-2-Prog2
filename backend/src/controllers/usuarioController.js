@@ -92,6 +92,10 @@ const crearUsuario = async (req, res) => {
     return respuesta(res, 400, 'Faltan campos requeridos: nombre, apellido, dni, email, password, fecha_nacimiento, rol', null);
   }
 
+  if (password.length < 8) {
+    return respuesta(res, 400, 'La contraseña debe tener al menos 8 caracteres', null);
+  }
+
   if (!ROLES_GESTIONABLES.includes(rol)) {
     return respuesta(res, 400, `El rol debe ser uno de: ${ROLES_GESTIONABLES.join(', ')}`, null);
   }
@@ -168,6 +172,10 @@ const crearUsuario = async (req, res) => {
 const actualizarUsuario = async (req, res) => {
   const { id } = req.params;
   const { nombre, apellido, email, telefono, fecha_nacimiento, id_sede, id_cobertura, especialidades, password } = req.body;
+
+  if (password && password.length < 8) {
+    return respuesta(res, 400, 'La contraseña debe tener al menos 8 caracteres', null);
+  }
 
   try {
     const [usuarios] = await pool.query('SELECT id, rol FROM usuario WHERE id = ?', [id]);

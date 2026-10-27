@@ -110,7 +110,33 @@ const consultarHistorial = async (req, res) => {
   }
 };
 
+// ============================================================
+// GET /historial-clinico/pacientes/mios
+// Lista los pacientes con al menos un historial clínico cargado
+// por el médico autenticado (es decir, que él mismo atendió).
+// ============================================================
+const misPacientes = async (req, res) => {
+  const usuarioAuth = req.usuario;
+
+  try {
+    const [pacientes] = await pool.query(
+      `SELECT DISTINCT p.id, p.nombre, p.apellido, p.dni
+       FROM historial_clinico h
+       JOIN usuario p ON p.id = h.id_paciente
+       WHERE h.id_medico = ?
+       ORDER BY p.apellido ASC, p.nombre ASC`,
+      [usuarioAuth.id]
+    );
+
+    return respuesta(res, 200, 'ok', pacientes);
+  } catch (error) {
+    console.error('Error al listar mis pacientes:', error.message);
+    return respuesta(res, 500, 'Error interno del servidor', null);
+  }
+};
+
 module.exports = {
   altaHistorial,
-  consultarHistorial
+  consultarHistorial,
+  misPacientes,
 };

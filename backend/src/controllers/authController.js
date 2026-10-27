@@ -15,6 +15,10 @@ const registro = async (req, res) => {
     return respuesta(res, 400, 'Faltan campos requeridos: nombre, apellido, dni, email, password, fecha_nacimiento, id_cobertura', null);
   }
 
+  if (password.length < 8) {
+    return respuesta(res, 400, 'La contraseña debe tener al menos 8 caracteres', null);
+  }
+
   try {
     // 2. Verificar que el DNI no esté en uso
     const [porDni] = await pool.query('SELECT id FROM usuario WHERE dni = ?', [dni]);
@@ -161,6 +165,10 @@ const actualizarPerfil = async (req, res) => {
 
   if (!email && !password && !telefono && !id_cobertura) {
     return respuesta(res, 400, 'No se recibió ningún campo para actualizar', null);
+  }
+
+  if (password && password.length < 8) {
+    return respuesta(res, 400, 'La contraseña debe tener al menos 8 caracteres', null);
   }
 
   try {

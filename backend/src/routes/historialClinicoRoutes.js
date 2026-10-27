@@ -8,6 +8,9 @@ router.use(verificarToken);
 // Alta de historial clínico (sólo médicos)
 router.post('/', verificarRol('medico'), historialClinicoController.altaHistorial);
 
+// Pacientes atendidos por el médico autenticado (debe ir antes de /:id_paciente)
+router.get('/mis-pacientes', verificarRol('medico'), historialClinicoController.misPacientes);
+
 // Consulta de historial clínico
 // Paciente: Ve el propio. Médico: Ve los suyos del paciente.
 router.get('/:id_paciente', verificarRol('paciente', 'medico'), historialClinicoController.consultarHistorial);
