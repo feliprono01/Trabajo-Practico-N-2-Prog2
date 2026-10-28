@@ -19,7 +19,7 @@ const getCoberturas = async (req, res) => {
  * POST /coberturas
  */
 const crearCobertura = async (req, res) => {
-  const { nombre } = req.body;
+  const nombre = req.body.nombre?.trim();
   if (!nombre) {
     return respuesta(res, 400, 'El nombre es obligatorio', null);
   }
@@ -37,7 +37,7 @@ const crearCobertura = async (req, res) => {
  */
 const actualizarCobertura = async (req, res) => {
   const { id } = req.params;
-  const { nombre } = req.body;
+  const nombre = req.body.nombre?.trim();
   if (!nombre) {
     return respuesta(res, 400, 'El nombre es obligatorio', null);
   }

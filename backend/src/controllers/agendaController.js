@@ -13,21 +13,60 @@ const sumarMinutos = (horaStr, minutos) => {
   return `${hh}:${mm}`;
 };
 
+const aMinutos = (horaStr) => {
+  const [h, m] = horaStr.split(':').map(Number);
+  return h * 60 + m;
+};
+
+// Si el médico atiende en dos sedes distintas el mismo día, se exige al menos
+// este margen entre el fin de un rango y el comienzo del otro (tiempo de traslado).
+const MARGEN_CAMBIO_DE_SEDE_MINUTOS = 30;
+
 // Un médico no puede tener dos rangos horarios superpuestos el mismo día,
-// sin importar la sede (no puede atender en dos lugares a la vez).
-const buscarRangoSuperpuesto = async (idMedico, fecha, horaEntrada, horaSalida, idExcluir) => {
+// sin importar la sede (no puede atender en dos lugares a la vez). Además, si
+// los rangos son en sedes distintas, se exige un margen mínimo entre ellos.
+const buscarRangoSuperpuesto = async (idMedico, fecha, horaEntrada, horaSalida, idSede, idExcluir) => {
   let query = `
-    SELECT a.id, a.hora_entrada, a.hora_salida, s.nombre AS sede
+    SELECT a.id, a.hora_entrada, a.hora_salida, a.id_sede, s.nombre AS sede
     FROM agenda a
     JOIN sede s ON s.id = a.id_sede
-    WHERE a.id_medico = ? AND a.fecha = ? AND a.hora_entrada < ? AND a.hora_salida > ?`;
-  const params = [idMedico, fecha, horaSalida, horaEntrada];
+    WHERE a.id_medico = ? AND a.fecha = ?`;
+  const params = [idMedico, fecha];
   if (idExcluir) {
     query += ' AND a.id <> ?';
     params.push(idExcluir);
   }
   const [filas] = await pool.query(query, params);
-  return filas[0] ?? null;
+
+  const inicioNuevo = aMinutos(horaEntrada);
+  const finNuevo = aMinutos(horaSalida);
+
+  for (const fila of filas) {
+    const inicioExistente = aMinutos(fila.hora_entrada);
+    const finExistente = aMinutos(fila.hora_salida);
+
+    const seSuperponen = inicioExistente < finNuevo && finExistente > inicioNuevo;
+    if (seSuperponen) {
+      return { ...fila, motivo: 'superposicion' };
+    }
+
+    if (parseInt(fila.id_sede) !== parseInt(idSede)) {
+      const brecha =
+        finExistente <= inicioNuevo ? inicioNuevo - finExistente : inicioExistente - finNuevo;
+      if (brecha < MARGEN_CAMBIO_DE_SEDE_MINUTOS) {
+        return { ...fila, motivo: 'margen_sede' };
+      }
+    }
+  }
+
+  return null;
+};
+
+const mensajeConflictoAgenda = (conflicto) => {
+  if (conflicto.motivo === 'margen_sede') {
+    return `El médico tiene un rango horario cercano en otra sede (${conflicto.hora_entrada} - ${conflicto.hora_salida} en ${conflicto.sede}). Se necesitan al menos ${MARGEN_CAMBIO_DE_SEDE_MINUTOS} minutos entre rangos de sedes distintas.`;
+  }
+  return `El médico ya tiene un rango horario que se superpone (${conflicto.hora_entrada} - ${conflicto.hora_salida} en ${conflicto.sede})`;
 };
 
 /**
@@ -107,14 +146,9 @@ const crearAgenda = async (req, res) => {
   }
 
   try {
-    const superpuesto = await buscarRangoSuperpuesto(id_medico, fecha, hora_entrada, hora_salida);
+    const superpuesto = await buscarRangoSuperpuesto(id_medico, fecha, hora_entrada, hora_salida, id_sede);
     if (superpuesto) {
-      return respuesta(
-        res,
-        409,
-        `El médico ya tiene un rango horario que se superpone (${superpuesto.hora_entrada} - ${superpuesto.hora_salida} en ${superpuesto.sede})`,
-        null
-      );
+      return respuesta(res, 409, mensajeConflictoAgenda(superpuesto), null);
     }
 
     const [result] = await pool.query(
@@ -166,14 +200,9 @@ const actualizarAgenda = async (req, res) => {
       }
     }
 
-    const superpuesto = await buscarRangoSuperpuesto(id_medico, fecha, hora_entrada, hora_salida, id);
+    const superpuesto = await buscarRangoSuperpuesto(id_medico, fecha, hora_entrada, hora_salida, id_sede, id);
     if (superpuesto) {
-      return respuesta(
-        res,
-        409,
-        `El médico ya tiene un rango horario que se superpone (${superpuesto.hora_entrada} - ${superpuesto.hora_salida} en ${superpuesto.sede})`,
-        null
-      );
+      return respuesta(res, 409, mensajeConflictoAgenda(superpuesto), null);
     }
 
     // No permitir que queden turnos confirmados fuera del nuevo rango horario

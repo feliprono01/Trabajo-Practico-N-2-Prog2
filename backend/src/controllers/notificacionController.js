@@ -92,9 +92,26 @@ const marcarLeida = async (req, res) => {
   }
 };
 
+// ============================================================
+// PUT /notificaciones/leidas
+// Marca todas las notificaciones del usuario autenticado como leídas
+// ============================================================
+const marcarTodasLeidas = async (req, res) => {
+  const { id: id_usuario } = req.usuario;
+
+  try {
+    await pool.query(`UPDATE notificacion SET leida = 1 WHERE id_usuario = ? AND leida = 0`, [id_usuario]);
+    return respuesta(res, 200, 'ok', null);
+  } catch (error) {
+    console.error('Error al marcar todas las notificaciones como leídas:', error.message);
+    return respuesta(res, 500, 'Error interno del servidor', null);
+  }
+};
+
 module.exports = {
   crearNotificacion,
   listarNotificaciones,
   contarNoLeidas,
-  marcarLeida
+  marcarLeida,
+  marcarTodasLeidas
 };

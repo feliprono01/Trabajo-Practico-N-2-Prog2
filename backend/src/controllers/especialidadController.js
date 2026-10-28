@@ -18,7 +18,7 @@ const obtenerEspecialidades = async (req, res) => {
  * POST /especialidades
  */
 const crearEspecialidad = async (req, res) => {
-  const { descripcion } = req.body;
+  const descripcion = req.body.descripcion?.trim();
   if (!descripcion) {
     return respuesta(res, 400, 'La descripción es obligatoria', null);
   }
@@ -39,8 +39,8 @@ const crearEspecialidad = async (req, res) => {
  */
 const actualizarEspecialidad = async (req, res) => {
   const { id } = req.params;
-  const { descripcion } = req.body;
-  
+  const descripcion = req.body.descripcion?.trim();
+
   if (!descripcion) {
     return respuesta(res, 400, 'La descripción es obligatoria', null);
   }

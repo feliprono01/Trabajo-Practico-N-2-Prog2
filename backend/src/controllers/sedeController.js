@@ -18,7 +18,9 @@ const obtenerSedes = async (req, res) => {
  * POST /sedes
  */
 const crearSede = async (req, res) => {
-  const { nombre, direccion, telefono } = req.body;
+  const nombre = req.body.nombre?.trim();
+  const direccion = req.body.direccion?.trim();
+  const telefono = req.body.telefono?.trim();
   if (!nombre || !direccion || !telefono) {
     return respuesta(res, 400, 'Nombre, direccion y telefono son obligatorios', null);
   }
@@ -39,8 +41,10 @@ const crearSede = async (req, res) => {
  */
 const actualizarSede = async (req, res) => {
   const { id } = req.params;
-  const { nombre, direccion, telefono } = req.body;
-  
+  const nombre = req.body.nombre?.trim();
+  const direccion = req.body.direccion?.trim();
+  const telefono = req.body.telefono?.trim();
+
   if (!nombre || !direccion || !telefono) {
     return respuesta(res, 400, 'Nombre, direccion y telefono son obligatorios', null);
   }

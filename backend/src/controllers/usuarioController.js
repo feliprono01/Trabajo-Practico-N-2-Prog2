@@ -4,6 +4,17 @@ const respuesta = require('../helpers/respuesta');
 
 const ROLES_GESTIONABLES = ['operador', 'medico', 'admin'];
 
+const calcularEdad = (fechaNacimiento) => {
+  const nacimiento = new Date(fechaNacimiento);
+  const hoy = new Date();
+  let edad = hoy.getFullYear() - nacimiento.getFullYear();
+  const aunNoCumplio =
+    hoy.getMonth() < nacimiento.getMonth() ||
+    (hoy.getMonth() === nacimiento.getMonth() && hoy.getDate() < nacimiento.getDate());
+  if (aunNoCumplio) edad--;
+  return edad;
+};
+
 const adjuntarEspecialidades = async (usuarios) => {
   const idsMedicos = usuarios.filter((u) => u.rol === 'medico').map((u) => u.id);
   if (idsMedicos.length === 0) return usuarios;
@@ -86,14 +97,20 @@ const listarUsuarios = async (req, res) => {
  * da de alta vía /auth/registro). Solo admin.
  */
 const crearUsuario = async (req, res) => {
-  const { nombre, apellido, dni, email, password, fecha_nacimiento, telefono, rol, id_sede, especialidades } = req.body;
+  const nombre = req.body.nombre?.trim();
+  const apellido = req.body.apellido?.trim();
+  const { dni, email, password, fecha_nacimiento, telefono, rol, id_sede, especialidades } = req.body;
 
   if (!nombre || !apellido || !dni || !email || !password || !fecha_nacimiento || !rol) {
     return respuesta(res, 400, 'Faltan campos requeridos: nombre, apellido, dni, email, password, fecha_nacimiento, rol', null);
   }
 
-  if (password.length < 8) {
+  if (password.trim().length < 8) {
     return respuesta(res, 400, 'La contraseña debe tener al menos 8 caracteres', null);
+  }
+
+  if (calcularEdad(fecha_nacimiento) < 18) {
+    return respuesta(res, 400, 'El usuario debe ser mayor de edad', null);
   }
 
   if (!ROLES_GESTIONABLES.includes(rol)) {
@@ -171,9 +188,11 @@ const crearUsuario = async (req, res) => {
  */
 const actualizarUsuario = async (req, res) => {
   const { id } = req.params;
-  const { nombre, apellido, email, telefono, fecha_nacimiento, id_sede, id_cobertura, especialidades, password } = req.body;
+  const nombre = req.body.nombre?.trim();
+  const apellido = req.body.apellido?.trim();
+  const { email, telefono, fecha_nacimiento, id_sede, id_cobertura, especialidades, password } = req.body;
 
-  if (password && password.length < 8) {
+  if (password && password.trim().length < 8) {
     return respuesta(res, 400, 'La contraseña debe tener al menos 8 caracteres', null);
   }
 
@@ -183,6 +202,10 @@ const actualizarUsuario = async (req, res) => {
       return respuesta(res, 404, 'Usuario no encontrado', null);
     }
     const rol = usuarios[0].rol;
+
+    if (fecha_nacimiento && rol !== 'paciente' && calcularEdad(fecha_nacimiento) < 18) {
+      return respuesta(res, 400, 'El usuario debe ser mayor de edad', null);
+    }
 
     if (email) {
       const [porEmail] = await pool.query('SELECT id FROM usuario WHERE email = ? AND id <> ?', [email, id]);

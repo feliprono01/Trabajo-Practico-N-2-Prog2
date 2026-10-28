@@ -12,6 +12,9 @@ router.get('/', notificacionController.listarNotificaciones);
 // Cantidad de notificaciones no leídas (para el badge del header)
 router.get('/no-leidas', notificacionController.contarNoLeidas);
 
+// Marcar todas las notificaciones como leídas
+router.put('/leidas', notificacionController.marcarTodasLeidas);
+
 // Marcar notificación como leída
 router.put('/:id/leida', notificacionController.marcarLeida);
 

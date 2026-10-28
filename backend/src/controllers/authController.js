@@ -8,14 +8,16 @@ const respuesta = require('../helpers/respuesta');
 // Registra un nuevo usuario con rol 'paciente'
 // ============================================================
 const registro = async (req, res) => {
-  const { nombre, apellido, dni, email, password, fecha_nacimiento, id_cobertura, telefono } = req.body;
+  const nombre = req.body.nombre?.trim();
+  const apellido = req.body.apellido?.trim();
+  const { dni, email, password, fecha_nacimiento, id_cobertura, telefono } = req.body;
 
   // 1. Validar campos requeridos
   if (!nombre || !apellido || !dni || !email || !password || !fecha_nacimiento || !id_cobertura) {
     return respuesta(res, 400, 'Faltan campos requeridos: nombre, apellido, dni, email, password, fecha_nacimiento, id_cobertura', null);
   }
 
-  if (password.length < 8) {
+  if (password.trim().length < 8) {
     return respuesta(res, 400, 'La contraseña debe tener al menos 8 caracteres', null);
   }
 
@@ -80,7 +82,10 @@ const login = async (req, res) => {
   try {
     // 2. Buscar usuario por DNI
     const [usuarios] = await pool.query(
-      'SELECT id, nombre, apellido, rol, id_sede, password FROM usuario WHERE dni = ?',
+      `SELECT u.id, u.nombre, u.apellido, u.rol, u.id_sede, u.password, s.nombre AS sede
+       FROM usuario u
+       LEFT JOIN sede s ON s.id = u.id_sede
+       WHERE u.dni = ?`,
       [dni]
     );
 
@@ -116,6 +121,7 @@ const login = async (req, res) => {
         apellido: usuario.apellido,
         rol: usuario.rol,
         id_sede: usuario.id_sede,
+        sede: usuario.sede ?? null,
       },
     });
 
@@ -167,7 +173,7 @@ const actualizarPerfil = async (req, res) => {
     return respuesta(res, 400, 'No se recibió ningún campo para actualizar', null);
   }
 
-  if (password && password.length < 8) {
+  if (password && password.trim().length < 8) {
     return respuesta(res, 400, 'La contraseña debe tener al menos 8 caracteres', null);
   }
 
