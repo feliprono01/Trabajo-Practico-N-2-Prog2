@@ -3711,6 +3711,99 @@
                   "raw": "{\n  \"telefono\": \"3424999999\",\n  \"id_cobertura\": 1\n}"
                 }
               }
+            },
+            {
+              "name": "POST /usuarios NEGATIVO (menor de edad)",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{admin_token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/usuarios",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "usuarios"
+                  ]
+                },
+                "description": "Debe responder 400: el usuario debe ser mayor de edad. No aplica a pacientes.",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"nombre\": \"Prueba\",\n  \"apellido\": \"Edad\",\n  \"dni\": \"99988877\",\n  \"email\": \"pruebaedad@test.com\",\n  \"password\": \"Test1234!\",\n  \"fecha_nacimiento\": \"2015-01-01\",\n  \"rol\": \"operador\",\n  \"id_sede\": 1\n}"
+                }
+              }
+            },
+            {
+              "name": "POST /usuarios NEGATIVO (password de solo espacios)",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{admin_token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/usuarios",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "usuarios"
+                  ]
+                },
+                "description": "Debe responder 400: la contraseña debe tener al menos 8 caracteres (los espacios no cuentan).",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"nombre\": \"Prueba\",\n  \"apellido\": \"Pass\",\n  \"dni\": \"99988866\",\n  \"email\": \"pruebapass@test.com\",\n  \"password\": \"        \",\n  \"fecha_nacimiento\": \"1990-01-01\",\n  \"rol\": \"operador\",\n  \"id_sede\": 1\n}"
+                }
+              }
+            },
+            {
+              "name": "POST /usuarios NEGATIVO (nombre de solo espacios)",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{admin_token}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/usuarios",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "usuarios"
+                  ]
+                },
+                "description": "Debe responder 400: faltan campos requeridos (el nombre recortado queda vacío).",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"nombre\": \"   \",\n  \"apellido\": \"Espacios\",\n  \"dni\": \"99988855\",\n  \"email\": \"pruebaespacios@test.com\",\n  \"password\": \"Test1234!\",\n  \"fecha_nacimiento\": \"1990-01-01\",\n  \"rol\": \"operador\",\n  \"id_sede\": 1\n}"
+                }
+              }
             }
           ],
           "description": ""
@@ -4188,6 +4281,37 @@
                   "raw": "{\n  \"hora_entrada\": \"10:00\",\n  \"hora_salida\": \"09:00\",\n  \"fecha\": \"2026-11-05\",\n  \"id_medico\": 3,\n  \"id_especialidad\": 1,\n  \"id_sede\": 1\n}"
                 }
               }
+            },
+            {
+              "name": "POST /agenda NEGATIVO (margen menor a 30 min entre sedes distintas)",
+              "request": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token_medico}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/agenda",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "agenda"
+                  ]
+                },
+                "description": "Requiere que el médico ya tenga un rango cargado ese día en otra sede terminando menos de 30 minutos antes del inicio de este. Debe responder 409 indicando el margen mínimo requerido (no confundir con la superposición horaria, que ya tiene su propio caso negativo).",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"hora_entrada\": \"12:20\",\n  \"hora_salida\": \"14:00\",\n  \"fecha\": \"2026-12-01\",\n  \"id_medico\": 3,\n  \"id_especialidad\": 1,\n  \"id_sede\": 2\n}"
+                }
+              }
             }
           ],
           "description": ""
@@ -4236,7 +4360,7 @@
           "description": ""
         },
         {
-          "name": "Notificaciones - contador",
+          "name": "Notificaciones - contador y marcar leídas",
           "item": [
             {
               "name": "GET /notificaciones/no-leidas",
@@ -4264,6 +4388,57 @@
                   ]
                 },
                 "description": "Devuelve { cantidad } de notificaciones no leídas del usuario autenticado."
+              }
+            },
+            {
+              "name": "PUT /notificaciones/leidas (marcar todas como leídas)",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Authorization",
+                    "value": "Bearer {{token_paciente}}",
+                    "type": "text"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/notificaciones/leidas",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "notificaciones",
+                    "leidas"
+                  ]
+                },
+                "description": "Marca todas las notificaciones no leídas del usuario autenticado como leídas, de una sola vez."
+              }
+            },
+            {
+              "name": "PUT /notificaciones/leidas SIN TOKEN (401)",
+              "request": {
+                "method": "PUT",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "url": {
+                  "raw": "{{base_url}}/notificaciones/leidas",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "notificaciones",
+                    "leidas"
+                  ]
+                },
+                "description": "Sin token de autenticación debe responder 401."
               }
             }
           ],

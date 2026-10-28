@@ -87,12 +87,21 @@ Además de los endpoints de semana 1 (`/auth`, `/coberturas`) y semanas 2-4 orig
 - `GET /pacientes/buscar?dni=` o `?apellido=` (operador, médico, admin).
 - `GET /agenda/fechas-disponibles` y `GET /agenda/horarios-disponibles` (paciente, operador, médico, admin): disponibilidad real para el wizard de turno, turnos de 30 minutos.
 - `GET /notificaciones/no-leidas`: cantidad de notificaciones no leídas, para el contador del header.
+- `PUT /notificaciones/leidas`: marca todas las notificaciones del usuario autenticado como leídas de una sola vez.
 
 Reglas de negocio ajustadas: `GET /sedes` y `GET /especialidades` ya no requieren rol admin (solo lectura); el operador ahora está restringido a su propia sede también para la **agenda** (antes solo para turnos); un médico puede cancelar sus propios turnos en cualquier sede donde atienda (antes se comparaba contra la sede fija del usuario); no se puede modificar un rango de agenda dejando turnos confirmados fuera de él, ni eliminarlo si tiene turnos confirmados; no se puede eliminar una especialidad en uso en la agenda; `GET /auditoria` ahora pagina (`page`/`pageSize`) y trae el nombre de quien hizo cada acción.
 
+Validaciones agregadas tras la revisión manual de la entrega:
+
+- Alta y edición de usuarios (`POST`/`PUT /usuarios`) y registro de paciente (`POST /auth/registro`) rechazan nombre/apellido/dirección/teléfono/descripción compuestos solo por espacios en blanco (se recortan con `trim()` antes de validar y guardar).
+- Las contraseñas (alta/edición de usuarios, registro, `PUT /auth/perfil`) ya no aceptan strings de solo espacios: se exige una longitud mínima de 8 caracteres **después** de recortar los espacios.
+- El alta y la edición de operador/médico/administrador exige mayoría de edad (18 años); no aplica a pacientes, que pueden registrarse o editarse sin esa restricción.
+- `POST`/`PUT /agenda`: además de rechazar rangos horarios superpuestos para un mismo médico, exige un margen mínimo de 30 minutos entre el fin de un rango y el comienzo de otro cuando pertenecen a sedes distintas (tiempo de traslado), devolviendo 409 con un mensaje que indica cuál es el rango en conflicto.
+- `POST /auth/login` ahora incluye el nombre de la sede (`sede`) en la respuesta, además del `id_sede`, para que el frontend lo muestre sin pegarle a otro endpoint.
+
 ## Colección de Postman
 
-Hay una única colección en `backend/Postman_TP2_Backend.postman_collection.json`, con una carpeta por cada semana de entrega (Semana 1, Semana 2, Semana 3 y Semana 4) y una carpeta adicional **"Semana 2 a 4 (ampliación)"** con los endpoints nuevos de esta entrega (usuarios, médicos, búsqueda de pacientes, disponibilidad de agenda, auditoría paginada, contador de notificaciones, autoedición de perfil). Dentro de cada carpeta los requests incluyen tanto los casos exitosos como los casos negativos pedidos por los criterios de aceptación (400, 401, 403, 404, 409). La carpeta de ampliación reutiliza los tokens que ya dejan seteados las carpetas de Setup anteriores, así que hay que correr al menos un login de cada rol antes.
+Hay una única colección en `backend/Postman_TP2_Backend.postman_collection.json`, con una carpeta por cada semana de entrega (Semana 1, Semana 2, Semana 3 y Semana 4) y una carpeta adicional **"Semana 2 a 4 (ampliación)"** con los endpoints nuevos de esta entrega (usuarios, médicos, búsqueda de pacientes, disponibilidad de agenda, auditoría paginada, contador y marcado de notificaciones, autoedición de perfil). Dentro de cada carpeta los requests incluyen tanto los casos exitosos como los casos negativos pedidos por los criterios de aceptación (400, 401, 403, 404, 409), incluidos los agregados tras la revisión manual: edad mínima, contraseña/nombre de solo espacios y margen de 30 minutos entre sedes distintas en la agenda. La carpeta de ampliación reutiliza los tokens que ya dejan seteados las carpetas de Setup anteriores, así que hay que correr al menos un login de cada rol antes.
 
 Para correrla de punta a punta sin tocar nada a mano:
 
@@ -104,7 +113,7 @@ Variables de la colección:
 - `base_url`: URL del servidor (por defecto `http://localhost:3000`).
 - `token`: JWT de un usuario `paciente`. Se completa automáticamente al correr `Semana 1 > Auth > POST /auth/login POSITIVO`, y se reutiliza en las semanas siguientes para los casos negativos de rol (403).
 - `admin_token`: JWT del usuario `admin` (Marcos Gomez). Se completa automáticamente al correr `Semana 2 > Setup > POST /auth/login ADMIN`.
-- `medico_token`: JWT del usuario `medico` (Ana Lopez). Se completa automáticamente al correr `Semana 3 > Setup > POST /auth/login MEDICO`.
+- `token_medico`: JWT del usuario `medico` (Ana Lopez). Se completa automáticamente al correr `Semana 3 > Setup > POST /auth/login MEDICO`.
 - `token_paciente`: JWT del usuario `paciente` (Franco Friggeri). Se completa automáticamente al correr `Semana 3 > Setup - Logins > Login Paciente`, y se reutiliza en Semana 4 para los casos negativos de rol (403) de auditoría y reportes.
 
 Las colecciones de Semana 2, Semana 3 y Semana 4 están pensadas para correrse sobre una base recién importada desde `clinica.sql` (los IDs de los requests asumen los autoincrementales del script original).
